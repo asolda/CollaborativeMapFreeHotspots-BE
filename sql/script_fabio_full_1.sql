@@ -1,3 +1,5 @@
+-- Script generante la struttura del DB e popola le tabelle utenti e reti wifi (senza segnalazioni e sessioni attive).
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
