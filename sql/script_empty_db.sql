@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS rete_wifi;
 CREATE TABLE rete_wifi (
   id int(11) NOT NULL,
   ssid varchar(30) NOT NULL,
-  qualità int(11) NOT NULL,
+  qualità float NOT NULL,
   latitudine float NOT NULL,
   longitudine float NOT NULL,
   numero_recensioni int(11) DEFAULT '0',
