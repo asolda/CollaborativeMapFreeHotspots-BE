@@ -15,8 +15,8 @@ CREATE TABLE rete_wifi (
   id int(11) NOT NULL,
   ssid varchar(30) NOT NULL,
   qualità float NOT NULL,
-  latitudine float NOT NULL,
-  longitudine float NOT NULL,
+  latitudine double NOT NULL,
+  longitudine double NOT NULL,
   numero_recensioni int(11) DEFAULT '0',
   necessità_login tinyint(1) DEFAULT '0',
   restrizioni text,
@@ -122,7 +122,7 @@ INSERT INTO `utente` (`id`, `email`, `password`) VALUES
 (9, 'amhad10@gmail.com', '4188736a00fbfb506aca06281acf338290455c21');
 
 INSERT INTO `rete_wifi` (`id`, `ssid`, `qualità`, `latitudine`, `longitudine`, `numero_recensioni`, `necessità_login`, `restrizioni`, `altre_informazioni`, `range_wifi`, `numero_segnalazioni`, `utente`) VALUES
-(1, 'tp-link', 4, 40.7751, 14.789, 0, 0, NULL, NULL, 5, 0, 2),
-(2, 'eduroam', 5, 40.7721, 14.7889, 0, 1, NULL, NULL, 0, 0, 1),
-(3, 'Studenti', 2, 40.7722, 14.7908, 0, 1, NULL, NULL, 0, 0, 1),
-(4, 'TISCALI', 3, 40.7732, 14.789, 0, 0, 'Torrent non permessi.', NULL, 20, 0, 4);
+(1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, NULL, NULL, 5, 0, 2),
+(2, 'eduroam', 5, 40.772143, 14.788932, 0, 1, NULL, NULL, 0, 0, 1),
+(3, 'Studenti', 2, 40.772221, 14.790845, 0, 1, NULL, NULL, 0, 0, 1),
+(4, 'TISCALI', 3, 40.773256, 14.789099, 0, 0, 'Torrent non permessi.', NULL, 20, 0, 4);
