@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Database: gopher_main
 --
-DROP DATABASE gopher_main;
+DROP DATABASE IF EXISTS gopher_main;
 CREATE DATABASE gopher_main DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE gopher_main;
 
