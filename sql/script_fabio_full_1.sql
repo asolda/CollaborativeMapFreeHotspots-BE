@@ -124,7 +124,8 @@ INSERT INTO `utente` (`id`, `email`, `password`) VALUES
 (9, 'amhad10@gmail.com', '4188736a00fbfb506aca06281acf338290455c21');
 
 INSERT INTO `rete_wifi` (`id`, `ssid`, `qualità`, `latitudine`, `longitudine`, `numero_recensioni`, `necessità_login`, `restrizioni`, `altre_informazioni`, `range_wifi`, `numero_segnalazioni`, `utente`) VALUES
-(1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, NULL, NULL, 5, 0, 2),
-(2, 'eduroam', 5, 40.772143, 14.788932, 0, 1, NULL, NULL, 0, 0, 1),
-(3, 'Studenti', 2, 40.772221, 14.790845, 0, 1, NULL, NULL, 0, 0, 1),
-(4, 'TISCALI', 3, 40.773256, 14.789099, 0, 0, 'Torrent non permessi.', NULL, 20, 0, 4);
+(1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, 'Range di indirizzi IP limitato.\r\nBanda up/down inferiore alla media dei piani ADSL comuni.', 'Velocità media download: 1Mbit/s\r\nVelocità media upload: 10Kb/s', 50, 0, 2),
+(2, 'Docenti', 5, 40.772143, 14.788932, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 5Mbit/s.\r\n\r\nPer il login alla rete pubblica sono richieste credenziali specifiche, contattare la segreteria.', 750, 0, 1),
+(3, 'Studenti', 2, 40.772221, 14.790845, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 3Mbit/s.\r\n\r\nLa rete ha un timeout di 2 minuti di inattività.', 750, 0, 1),
+(4, 'TISCALI', 3, 40.773256, 14.789099, 0, 0, 'Torrent non permessi.', 'Operativa in media dalle 8:00 alle 20:00.', 20, 0, 4),
+(5, 'linksys', 4, 40.770219, 14.791901, 0, 0, '', 'Supporta 5ghz.', 20, 0, 4);
