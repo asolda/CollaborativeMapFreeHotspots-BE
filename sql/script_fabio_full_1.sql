@@ -10,6 +10,13 @@ USE gopher_main;
 
 
 
+-- Creazione tabella utenti
+DROP TABLE IF EXISTS utente;
+CREATE TABLE utente (
+  id int(11) NOT NULL,
+  email varchar(30) NOT NULL,
+  password varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Creazione tabella rete WiFi
 DROP TABLE IF EXISTS rete_wifi;
@@ -38,6 +45,13 @@ CREATE TABLE segnalazione (
   visualizzato tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Creazione tabella valutazione
+CREATE TABLE valutazione (
+  utente int(11) NOT NULL,
+  rete_wifi int(11) NOT NULL,
+  voto int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 -- Creazione tabella sessioni
 DROP TABLE IF EXISTS sessione;
 CREATE TABLE sessione (
@@ -48,13 +62,10 @@ CREATE TABLE sessione (
   utente int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Creazione tabella utenti
-DROP TABLE IF EXISTS utente;
-CREATE TABLE utente (
-  id int(11) NOT NULL,
-  email varchar(30) NOT NULL,
-  password varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
 
 
 
@@ -78,6 +89,12 @@ ALTER TABLE sessione
 -- Chiave primaria per la tabella utente
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
+  
+-- Chiavi primarie per valutazione
+ALTER TABLE valutazione
+  ADD PRIMARY KEY (utente,rete_wifi),
+  ADD UNIQUE KEY FK_valutazione_RETE_WIFI (utente),
+  ADD UNIQUE KEY FK_valutazione_UTENTE (rete_wifi);
 
   
   
@@ -106,6 +123,11 @@ ALTER TABLE segnalazione
 
 ALTER TABLE sessione
   ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  
+ALTER TABLE valutazione
+  ADD CONSTRAINT FK_valutazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
+  ADD CONSTRAINT FK_valutazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+
 
   
   
