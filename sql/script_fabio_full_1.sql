@@ -72,41 +72,43 @@ CREATE TABLE sessione (
 
 
 
--- Chiave primaria per rete_WiFi
+-- Chiave primaria per rete_WiFi + chiave esterna
 ALTER TABLE rete_wifi
-  ADD PRIMARY KEY (id);
+  ADD PRIMARY KEY (id),
+  ADD KEY FK_rete_wifi_UTENTE (utente);
 
--- Chiavi primarie per segnalazione
+-- Chiavi primarie per segnalazione + chiavi esterne
 ALTER TABLE segnalazione
-  ADD PRIMARY KEY (utente,rete_wifi),
-  ADD UNIQUE KEY FK_segnalazione_RETE_WIFI (utente),
-  ADD UNIQUE KEY FK_segnalazione_UTENTE (rete_wifi);
+  ADD PRIMARY KEY (utente,rete_wifi,tipo),
+  ADD KEY FK_segnalazione_RETE_WIFI (utente) USING BTREE,
+  ADD KEY FK_segnalazione_UTENTE (rete_wifi) USING BTREE;
 
--- Chiave primaria per la tabella sessione
+-- Chiave primaria per la tabella sessione + chiave esterna
 ALTER TABLE sessione
-  ADD PRIMARY KEY (session_id);
+  ADD PRIMARY KEY (session_id),
+  ADD KEY FK_sessione_UTENTE (utente);
 
 -- Chiave primaria per la tabella utente
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
   
--- Chiavi primarie per valutazione
+-- Chiavi primarie per valutazione + chiavi esterne
 ALTER TABLE valutazione
   ADD PRIMARY KEY (utente,rete_wifi),
-  ADD UNIQUE KEY FK_valutazione_RETE_WIFI (utente),
-  ADD UNIQUE KEY FK_valutazione_UTENTE (rete_wifi);
+  ADD KEY FK_valutazione_RETE_WIFI (utente) USING BTREE,
+  ADD KEY FK_valutazione_UTENTE (rete_wifi) USING BTREE;
 
   
   
   
   
   
--- Settaggio degli AUTO_INCREMENT
+-- Settaggio degli AUTO_INCREMENT (IMPORTANTE: per ogni clone di questo script popolato va fixato in base al numero di righe nelle tabelle)
 ALTER TABLE rete_wifi
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 ALTER TABLE utente
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
   
   
   
@@ -129,12 +131,13 @@ ALTER TABLE valutazione
   ADD CONSTRAINT FK_valutazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
 
 
+
   
   
   
   
 -- Query di popolazione
-INSERT INTO `utente` (`id`, `email`, `password`) VALUES
+INSERT INTO utente (id, email, password) VALUES
 (1, 'asolda92@gmail.com', '74583a72809d2c308518ceaa966047d97c261f54'),
 (2, 'finalgalaxy@gmail.com', 'e842a311179ec6cd39a674ea85529c0e6aad8002'),
 (3, 'cesaretucci95@gmail.com', '5fb0076337e0df3de0e7162d3bcf9788e3b9758d'),
@@ -145,7 +148,7 @@ INSERT INTO `utente` (`id`, `email`, `password`) VALUES
 (8, 'mathewalter2@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
 (9, 'amhad10@gmail.com', '4188736a00fbfb506aca06281acf338290455c21');
 
-INSERT INTO `rete_wifi` (`id`, `ssid`, `qualità`, `latitudine`, `longitudine`, `numero_recensioni`, `necessità_login`, `restrizioni`, `altre_informazioni`, `range_wifi`, `numero_segnalazioni`, `utente`) VALUES
+INSERT INTO rete_wifi (id, ssid, qualità, latitudine, longitudine, numero_recensioni, necessità_login, restrizioni, altre_informazioni, range_wifi, numero_segnalazioni, utente) VALUES
 (1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, 'Range di indirizzi IP limitato.\r\nBanda up/down inferiore alla media dei piani ADSL comuni.', 'Velocità media download: 1Mbit/s\r\nVelocità media upload: 10Kb/s', 50, 0, 2),
 (2, 'Docenti', 5, 40.772143, 14.788932, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 5Mbit/s.\r\n\r\nPer il login alla rete pubblica sono richieste credenziali specifiche, contattare la segreteria.', 750, 0, 1),
 (3, 'Studenti', 2, 40.772221, 14.790845, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 3Mbit/s.\r\n\r\nLa rete ha un timeout di 2 minuti di inattività.', 750, 0, 1),
