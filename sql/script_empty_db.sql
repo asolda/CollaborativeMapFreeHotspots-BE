@@ -72,36 +72,38 @@ CREATE TABLE sessione (
 
 
 
--- Chiave primaria per rete_WiFi
+-- Chiave primaria per rete_WiFi + chiave esterna
 ALTER TABLE rete_wifi
-  ADD PRIMARY KEY (id);
+  ADD PRIMARY KEY (id),
+  ADD KEY FK_rete_wifi_UTENTE (utente);
 
--- Chiavi primarie per segnalazione
+-- Chiavi primarie per segnalazione + chiavi esterne
 ALTER TABLE segnalazione
-  ADD PRIMARY KEY (utente,rete_wifi),
-  ADD UNIQUE KEY FK_segnalazione_RETE_WIFI (utente),
-  ADD UNIQUE KEY FK_segnalazione_UTENTE (rete_wifi);
+  ADD PRIMARY KEY (utente,rete_wifi,tipo),
+  ADD KEY FK_segnalazione_RETE_WIFI (utente) USING BTREE,
+  ADD KEY FK_segnalazione_UTENTE (rete_wifi) USING BTREE;
 
--- Chiave primaria per la tabella sessione
+-- Chiave primaria per la tabella sessione + chiave esterna
 ALTER TABLE sessione
-  ADD PRIMARY KEY (session_id);
+  ADD PRIMARY KEY (session_id),
+  ADD KEY FK_sessione_UTENTE (utente);
 
 -- Chiave primaria per la tabella utente
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
   
--- Chiavi primarie per valutazione
+-- Chiavi primarie per valutazione + chiavi esterne
 ALTER TABLE valutazione
   ADD PRIMARY KEY (utente,rete_wifi),
-  ADD UNIQUE KEY FK_valutazione_RETE_WIFI (utente),
-  ADD UNIQUE KEY FK_valutazione_UTENTE (rete_wifi);
+  ADD KEY FK_valutazione_RETE_WIFI (utente) USING BTREE,
+  ADD KEY FK_valutazione_UTENTE (rete_wifi) USING BTREE;
 
   
   
   
   
   
--- Settaggio degli AUTO_INCREMENT
+-- Settaggio degli AUTO_INCREMENT (IMPORTANTE: per ogni clone di questo script popolato va fixato in base al numero di righe nelle tabelle)
 ALTER TABLE rete_wifi
   MODIFY id int(11) NOT NULL AUTO_INCREMENT;
 
