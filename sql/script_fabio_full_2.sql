@@ -149,16 +149,19 @@ INSERT INTO rete_wifi (id, ssid, qualità, latitudine, longitudine, numero_recens
 (1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, 'Range di indirizzi IP limitato.\r\nBanda up/down inferiore alla media dei piani ADSL comuni.', 'Velocità media download: 1Mbit/s\r\nVelocità media upload: 10Kb/s', 50, 0, 2),
 (2, 'Docenti', 5, 40.772143, 14.788932, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 5Mbit/s.\r\n\r\nPer il login alla rete pubblica sono richieste credenziali specifiche, contattare la segreteria.', 750, 0, 1),
 (3, 'Studenti', 2, 40.772221, 14.790845, 0, 1, 'Traffico controllato dagli amministratori di rete.', 'Velocità media download: 3Mbit/s.\r\n\r\nLa rete ha un timeout di 2 minuti di inattività.', 750, 0, 1),
-(4, 'TISCALI', 3, 40.773256, 14.789099, 0, 0, 'Torrent non permessi.', 'Operativa in media dalle 8:00 alle 20:00.', 20, 0, 4),
-(5, 'linksys', 4, 40.770219, 14.791901, 0, 0, '', 'Supporta 5ghz.', 20, 0, 4),
+(4, 'TISCALI', 4, 40.773256, 14.789099, 1, 0, 'Torrent non permessi.', 'Operativa in media dalle 8:00 alle 20:00.', 20, 0, 4),
+(5, 'linksys', 4.5, 40.770219, 14.791901, 1, 0, '', 'Supporta 5ghz.', 20, 5, 4),
 (6, 'TISCALI', 3, 40.773163, 14.788662, 0, 0, NULL, NULL, 30, 0, 5),
 (7, 'Vodafone-12345678', 2, 40.772452, 14.788941, 0, 0, NULL, NULL, 35, 0, 5),
-(8, 'Vodafone-28920868', 4, 40.772107, 14.789928, 0, 0, NULL, 'Supporta 5ghz.', 35, 0, 5);
+(8, 'Vodafone-28920868', 4, 40.772107, 14.789928, 0, 0, NULL, 'Supporta 5ghz.', 35, 1, 5);
 
 INSERT INTO segnalazione (utente, rete_wifi, tipo, dettagli, visualizzato) VALUES
 (1, 5, 1, 'Errore: il range è limitato a 10 metri!', 0),
 (1, 5, 2, 'Errore: la rete non supporta 5ghz!', 0),
-(1, 8, 0, '', 0);
+(1, 8, 0, '', 0),
+(5, 5, 2, 'La rete non supporta 5ghz...', 0),
+(6, 5, 2, 'La rete non supporta 5ghz, correggila!', 0),
+(8, 5, 2, 'La rete prende solo a frequenza 2.4ghz...', 0);
 
 INSERT INTO valutazione (utente, rete_wifi, voto) VALUES
 (2, 4, 5),
