@@ -32,7 +32,7 @@ module.exports = {
 		pin.testpoint(req, res);
     });
 	
-	app.post('/pin/getpin/', function(req, res){
+	app.get('/pin/get_networks/?latitude=:latitude&longitude=:longitude&radius_lat=:radius_lat&radius_long:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
  
