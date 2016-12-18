@@ -45,8 +45,8 @@ CREATE TABLE segnalazione (
   visualizzato tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Creazione tabella valutazione
-CREATE TABLE valutazione (
+-- Creazione tabella valuta
+CREATE TABLE valuta (
   utente int(11) NOT NULL,
   rete_wifi int(11) NOT NULL,
   voto int(11) NOT NULL
@@ -92,11 +92,11 @@ ALTER TABLE sessione
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
   
--- Chiavi primarie per valutazione + chiavi esterne
-ALTER TABLE valutazione
+-- Chiavi primarie per valuta + chiavi esterne
+ALTER TABLE valuta
   ADD PRIMARY KEY (utente,rete_wifi),
-  ADD KEY FK_valutazione_RETE_WIFI (utente) USING BTREE,
-  ADD KEY FK_valutazione_UTENTE (rete_wifi) USING BTREE;
+  ADD KEY FK_valuta_RETE_WIFI (utente) USING BTREE,
+  ADD KEY FK_valuta_UTENTE (rete_wifi) USING BTREE;
 
   
   
@@ -126,6 +126,6 @@ ALTER TABLE segnalazione
 ALTER TABLE sessione
   ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
   
-ALTER TABLE valutazione
-  ADD CONSTRAINT FK_valutazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
-  ADD CONSTRAINT FK_valutazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+ALTER TABLE valuta
+  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
+  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
