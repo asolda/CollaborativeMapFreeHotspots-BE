@@ -165,6 +165,6 @@ INSERT INTO segnalazione (utente, rete_wifi, tipo, dettagli, visualizzato) VALUE
 (6, 5, 2, 'La rete non supporta 5ghz, correggila!', 0),
 (8, 5, 2, 'La rete prende solo a frequenza 2.4ghz...', 0);
 
-INSERT INTO valutazione (utente, rete_wifi, voto) VALUES
+INSERT INTO valuta (utente, rete_wifi, voto) VALUES
 (2, 4, 5),
 (2, 5, 5);
