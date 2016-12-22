@@ -17,7 +17,7 @@ function Connection() {
     });
   };
   
-  this.switch_db(new_db) {
+  this.switch_db = function(new_db) {
     this.pool = mysql.close();
     this.pool = mysql.createPool({
       connectionLimit: 10,
@@ -27,7 +27,7 @@ function Connection() {
       password: 'admin',
       database: 'gopher_'+new_db
     });
-  }
+  };
  
   this.acquire = function(callback) {
     this.pool.getConnection(function(err, connection) {
