@@ -2,7 +2,7 @@
 var user = require('./models/user');
 var pin = require('./models/pin');
 
-
+//commento per demo git
  
 module.exports = {
   configure: function(app) {
