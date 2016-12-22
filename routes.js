@@ -1,6 +1,7 @@
 // Models, MUST EDIT.
 var user = require('./models/user');
 var pin = require('./models/pin');
+var segnala = require('./models/segnala');
 
 //commento per demo git
  
@@ -35,6 +36,10 @@ module.exports = {
 	app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
+    
+    app.post('/segnala/', function(req, res){
+        segnala.report(req, res);
+    });
  
     app.delete('/user/:email/', function(req, res) {
       user.delete(req.params.email, res);
