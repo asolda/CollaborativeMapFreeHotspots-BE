@@ -11,9 +11,11 @@ function Pin(){
   
 	this.getlistpin = function(req, res){
 		connection.acquire(function(err, con){
-			con.query('SELECT * FROM rete_wifi WHERE latitudine >= '+req.body.latitude+'-100 && '+
-						'latitudine <= '+req.body.latitude+'+100 && longitudine >= '+req.body.longitude+'-100 && longitudine <= '+req.body.longitude+'+100',
+			con.query('SELECT * FROM rete_wifi WHERE latitudine >= '+req.params.latitudine+'-100 && '+
+						'latitudine <= '+req.params.latitudine+'+100 && longitudine >= '+req.params.longitudine+'-100 && longitudine <= '+req.params.longitudine+'+100',
 				function(err, result) {
+                    var new_res = {
+                
 					con.release();
 					res.send(JSON.stringify(result));
 				}

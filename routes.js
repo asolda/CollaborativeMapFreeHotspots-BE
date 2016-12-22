@@ -27,12 +27,12 @@ module.exports = {
     app.put('/user/', function(req, res) {
       user.update(req.body, res);
     });
-	 
+	
 	app.post('/pin/testcoordinates/', function(req, res) {
 		pin.testpoint(req, res);
     });
 	
-	app.get('/pin/get_networks/?latitude=:latitude&longitude=:longitude&radius_lat=:radius_lat&radius_long:radius_long', function(req, res){
+	app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
  
