@@ -1,6 +1,7 @@
 // Require express and body-parser libraries
 var express = require('express');
 var bodyparser = require('body-parser');
+var cookieparser = require('cookie-parser');
 
 // Require also internal backend node scripts
 var connection = require('./connection'); // Note: exported 'class' Connection()
@@ -10,6 +11,7 @@ var routes = require('./routes'); // Note: exported 'configure' function
 var app = express();
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
+app.use(cookieparser());
 
 // Server details such as server IP address and port
 var server_port = 8080;
