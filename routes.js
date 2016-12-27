@@ -3,6 +3,8 @@ var user = require('./models/user');
 var pin = require('./models/pin');
 var segnala = require('./models/segnala');
 
+var mailer = require('./configmailer');
+
 //commento per demo git
  
 module.exports = {
@@ -13,7 +15,17 @@ module.exports = {
 		res.end('If you reach this endpoint, then Node.js is working! :D');
 	});
 
-	
+	app.post('/test_nodemailer/', function(req, res){
+        mailer.transporter.sendMail({
+            from: 'alwaysconnectednoreply@gmail.com',
+            to: 'finalgalaxy@gmail.com',
+            subject: 'Hai perso un premio!',
+            text: 'Eeeee, volevi! Guarda che faccia!'
+        }, function (err, responseStatus){
+            mailer.transporter.close();
+        });
+        res.send({status: 0});
+    });
 	
 	
 	// Endpoints. MUST EDIT, WORK IN PROGRESS.

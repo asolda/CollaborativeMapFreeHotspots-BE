@@ -2,7 +2,9 @@
 var express = require('express');
 var bodyparser = require('body-parser');
 var cookieparser = require('cookie-parser');
-var sendmail = require('sendmail')({silent: true});
+
+var mailer = require('./configmailer');
+mailer.init();
 
 
 // Require also internal backend node scripts
