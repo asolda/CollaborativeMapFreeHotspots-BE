@@ -5,7 +5,12 @@ var segnala = require('./models/segnala');
 
 var mailer = require('./configmailer');
 
-//commento per demo git
+/*
+sha1 encoding
+
+var crypto = require('crypto');
+console.log(crypto.createHash('sha1').update('email@boh.com').digest("hex"));
+*/
  
 module.exports = {
   configure: function(app) {
