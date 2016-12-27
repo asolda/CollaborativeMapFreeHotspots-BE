@@ -24,7 +24,7 @@ module.exports = {
         mailer.transporter.sendMail({
             from: 'alwaysconnectednoreply@gmail.com',
             to: 'finalgalaxy@gmail.com',
-            subject: 'Hai perso un premio!',
+            subject: 'Hai vinto un premio!',
             text: 'Eeeee, volevi! Guarda che faccia!'
         }, function (err, responseStatus){
             mailer.transporter.close();
@@ -33,14 +33,24 @@ module.exports = {
     });
 	
 	
+    app.post('/user/new/', function(req, res) {
+      user.create(req.body, res);
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	// Endpoints. MUST EDIT, WORK IN PROGRESS.
     app.get('/user/', function(req, res) {
       user.get(res);
     });
  
-    app.post('/user/', function(req, res) {
-      user.create(req.body, res);
-    });
  
     app.put('/user/', function(req, res) {
       user.update(req.body, res);
