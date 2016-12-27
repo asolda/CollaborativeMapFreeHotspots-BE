@@ -62,7 +62,12 @@ CREATE TABLE sessione (
   utente int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+-- Creazione tabella token
+CREATE TABLE token (
+  token varchar(44) NOT NULL,
+  email varchar(30) NOT NULL,
+  creation_time int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 
@@ -97,8 +102,12 @@ ALTER TABLE valuta
   ADD PRIMARY KEY (utente,rete_wifi),
   ADD KEY FK_valuta_RETE_WIFI (utente) USING BTREE,
   ADD KEY FK_valuta_UTENTE (rete_wifi) USING BTREE;
-
   
+-- Chiavi primarie per token
+ALTER TABLE token
+  ADD PRIMARY KEY (token,email);
+
+
   
   
   
@@ -129,6 +138,7 @@ ALTER TABLE sessione
 ALTER TABLE valuta
   ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
   ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+
 
 
   
