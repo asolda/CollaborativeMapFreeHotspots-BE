@@ -1,7 +1,9 @@
-// Require express and body-parser libraries
+// Requires npm packages
 var express = require('express');
 var bodyparser = require('body-parser');
 var cookieparser = require('cookie-parser');
+var sendmail = require('sendmail')({silent: true});
+
 
 // Require also internal backend node scripts
 var connection = require('./connection'); // Note: exported 'class' Connection()
