@@ -3,7 +3,8 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var cookieparser = require('cookie-parser');
 
-var mailer = require('./configmailer');
+var config = require('./config');
+var mailer = require('./mailer');
 mailer.init();
 
 
@@ -16,11 +17,6 @@ var app = express();
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 app.use(cookieparser());
-
-// Server details such as server IP address and port
-var server_port = 8080;
-var server_ip_address = '127.0.0.1';
-var server_ip_address_http = 'http://127.0.0.1';
 
 // Server cross-domain details for setting possible accesses
 var allowCrossDomain = function(req, res, next) {
@@ -37,6 +33,6 @@ connection.init(); // Init DB
 routes.configure(app); // Give express to configure option for end-points configuration
 
 // Start the server
-var server = app.listen(server_port, server_ip_address, function() {
+var server = app.listen(config.server_port, config.server_ip_address, function() {
   console.log('Server active, listening on port ' + server.address().port + '.');
 });
