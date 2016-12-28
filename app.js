@@ -1,7 +1,11 @@
-// Require express and body-parser libraries
+// Requires npm packages
 var express = require('express');
 var bodyparser = require('body-parser');
 var cookieparser = require('cookie-parser');
+
+var mailer = require('./configmailer');
+mailer.init();
+
 
 // Require also internal backend node scripts
 var connection = require('./connection'); // Note: exported 'class' Connection()
@@ -20,7 +24,7 @@ var server_ip_address_http = 'http://127.0.0.1';
 
 // Server cross-domain details for setting possible accesses
 var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', server_ip_address_http); // Allow cross-domain control access only to the server itself
+  res.header('Access-Control-Allow-Origin', '*'); // Allow cross-domain control access only to the server itself
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'); // Allow those operations
   res.header('Access-Control-Allow-Headers', 'Content-Type');		 // Headers allowed
   next();
