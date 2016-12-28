@@ -3,6 +3,8 @@ var crypto = require('crypto');
 var config = require('../config');
 var mailer = require('../mailer');
 
+var token = require('./token');
+
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
@@ -50,34 +52,28 @@ function User() {
             }else{
                 con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function(err, result){
                     if(result[0].n_found > 0){
-                        var token_generated = true;
-                        
                         // Generate token
-                        var token = 'TEMP'+crypto.createHash('sha1').update(user.email).digest("hex");
-                        con.query('INSERT INTO token (token, email, creation_time) VALUES (?, ?, ?)', [token, user.email, (new Date().getTime()/1000)], function(err, result){
-                            if(err){
-                                con.query('UPDATE token SET token = ?, creation_time = ? WHERE email = ?', [token, (new Date().getTime()/1000), user.email], function(err, result){
-                                    if(err) token_generated=false;
+                        token.generate(user.email).then(token_generated => {
+                            console.log(user.email+","+token_generated);
+                            if(token_generated != null){
+                                // Send mail
+                                mailer.transporter.sendMail({
+                                    from: config.smtp_google_user,
+                                    to: user.email,
+                                    subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
+                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated
+                                }, function (err, responseStatus){
+                                    mailer.transporter.close();
                                 });
+                                
+                                // Send JSON to middleware informing mail is sent
+                                res.send({status: 0, message: 'RESET_REQUEST_OK'});
+                            }else{
+                                res.send({status: 1, message: 'ERROR_DB'});
                             }
-                        });
-                        
-                        if(token_generated){
-                            // Send mail
-                            mailer.transporter.sendMail({
-                                from: config.smtp_google_user,
-                                to: user.email,
-                                subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
-                                text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token
-                            }, function (err, responseStatus){
-                                mailer.transporter.close();
-                            });
-                            
-                            // Send JSON to middleware informing mail is sent
-                            res.send({status: 0, message: 'RESET_REQUEST_OK'});
-                        }else{
+                        }).catch(err => {
                             res.send({status: 1, message: 'ERROR_DB'});
-                        }
+                        });
                     }else{
                         res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
                     }
