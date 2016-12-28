@@ -18,19 +18,19 @@ describe('Pins', () => {
       */
     describe('/GET Pin', () => {
         it('it should GET PINS list', (done) => {
-            it('it should GET PINS list', (done) => {
-                chai.request('http://localhost:8080')
-                    .get('/pin/get_networks/1/2/3/4')
 
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        done();
-                        res.should.have.header('content-type', 'text/html; charset=utf-8');
-                        done();
+            chai.request('http://localhost:8080')
+                .get('/pin/get_networks/1/2/3/4')
+
+                .end((err, res) => {
+                    res.should.have.status(200);
+
+                    res.should.have.header('content-type', 'text/html; charset=utf-8');
+                    done();
 
 
-                    });
-            });
+
+                });
         });
     });
 
