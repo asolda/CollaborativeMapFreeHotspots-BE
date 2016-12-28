@@ -3,7 +3,8 @@ var user = require('./models/user');
 var pin = require('./models/pin');
 var segnala = require('./models/segnala');
 
-var mailer = require('./configmailer');
+var config = require('./config');
+var mailer = require('./mailer');
 
 /*
 sha1 encoding
@@ -22,7 +23,7 @@ module.exports = {
 
 	app.post('/test_nodemailer/', function(req, res){
         mailer.transporter.sendMail({
-            from: 'alwaysconnectednoreply@gmail.com',
+            from: config.smtp_google_user,
             to: 'finalgalaxy@gmail.com',
             subject: 'Hai vinto un premio!',
             text: 'Eeeee, volevi! Guarda che faccia!'
@@ -34,10 +35,17 @@ module.exports = {
 	
 	
     app.post('/user/new/', function(req, res) {
-      user.create(req.body, res);
+        user.create(req.body, res);
     });
     
+    app.post('/user/reset_password/request', function(req, res){
+        user.reset_password_request(req.body, res);
+    });
     
+    app.get('/user/reset_password/token/:token/', function(req, res){
+        console.log('Token: '+req.params.token);
+        res.send({token: req.params.token});
+    });
     
     
     
