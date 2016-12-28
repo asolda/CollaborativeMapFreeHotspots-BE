@@ -1,5 +1,7 @@
 var connection = require('../connection');
 var crypto = require('crypto');
+var config = require('../config');
+var mailer = require('../mailer');
 
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -14,19 +16,21 @@ function validatePassword(password){
 
 
 function User() {
+    
+    
     this.create = function(user, res){
         connection.acquire(function(err, con) {
             if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
-                res.send({status: 0, message: 'ERROR_EMAIL_PASSWORD'});
+                res.send({status: 1, message: 'ERROR_EMAIL_PASSWORD'});
             }else if(user.email == null || user.email.length==0 || !validateEmail(user.email)){
-                res.send({status: 0, message: 'ERROR_EMAIL'});
+                res.send({status: 1, message: 'ERROR_EMAIL'});
             }else if(user.password == null || user.password.length==0 || !validatePassword(user.password)){
-                res.send({status: 0, message: 'ERROR_PASSWORD'});
+                res.send({status: 1, message: 'ERROR_PASSWORD'});
             }else if(user.password.length<8){
-                res.send({status: 0, message: 'ERROR_PASSWORD_LENGTH'});
+                res.send({status: 1, message: 'ERROR_PASSWORD_LENGTH'});
             }else{
                 var hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
-                con.query('INSERT INTO utente (email, password) VALUES (?, ?)', [user.email, hash_psw], function(err, result) {
+                con.query('INSERT INTO utente (email, password) VALUES (\'?\', \'?\')', [user.email, hash_psw], function(err, result) {
                     con.release();
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'});
@@ -35,6 +39,51 @@ function User() {
                     }
                 });
             }
+            con.release();
+        });
+    }
+    
+    this.reset_password_request = function(user, res){
+        connection.acquire(function(err, con) {
+            if(user.email == null || user.email.length == 0 || !validateEmail(user.email)){
+                res.send({status: 1, message: 'ERROR_EMAIL'});
+            }else{
+                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function(err, result){
+                    if(result[0].n_found > 0){
+                        var token_generated = true;
+                        
+                        // Generate token
+                        var token = 'TEMP'+crypto.createHash('sha1').update(user.email).digest("hex");
+                        con.query('INSERT INTO token (token, email, creation_time) VALUES (?, ?, ?)', [token, user.email, (new Date().getTime()/1000)], function(err, result){
+                            if(err){
+                                con.query('UPDATE token SET token = ?, creation_time = ? WHERE email = ?', [token, (new Date().getTime()/1000), user.email], function(err, result){
+                                    if(err) token_generated=false;
+                                });
+                            }
+                        });
+                        
+                        if(token_generated){
+                            // Send mail
+                            mailer.transporter.sendMail({
+                                from: config.smtp_google_user,
+                                to: user.email,
+                                subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
+                                text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token
+                            }, function (err, responseStatus){
+                                mailer.transporter.close();
+                            });
+                            
+                            // Send JSON to middleware informing mail is sent
+                            res.send({status: 0, message: 'RESET_REQUEST_OK'});
+                        }else{
+                            res.send({status: 1, message: 'ERROR_DB'});
+                        }
+                    }else{
+                        res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                    }
+                });
+            }
+            con.release();
         });
     }
 
