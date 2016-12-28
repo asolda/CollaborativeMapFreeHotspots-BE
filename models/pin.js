@@ -14,9 +14,12 @@ function Pin(){
 			con.query('SELECT id,latitudine,longitudine,numero_segnalazioni FROM rete_wifi WHERE latitudine >= '+req.params.latitudine+'-100 && '+
 						'latitudine <= '+req.params.latitudine+'+100 && longitudine >= '+req.params.longitudine+'-100 && longitudine <= '+req.params.longitudine+'+100',
 				function(err, result) {
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'})
+                    }else{
+                        res.send(JSON.stringify(result));
+                    }
 					con.release();
-                    
-                    res.send(JSON.stringify(result));
 				}
 			);
 		});
