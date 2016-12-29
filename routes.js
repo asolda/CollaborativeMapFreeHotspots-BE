@@ -49,6 +49,7 @@ module.exports = {
     
     app.get('/user/reset_password/token/:token/', function(req, res){
         //codice
+        
     });
     
     app.post('/user/reset_password/do/', function(req, res){
