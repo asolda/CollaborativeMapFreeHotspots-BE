@@ -64,10 +64,39 @@ function Pin(){
                                                                     data.altre_informazioni, data.range, data.utente],
                     function(err, result) {
                         if(err){
-                            console.log(err.message);
                             res.send({status: 1, message: 'ERROR_DB'})
                         }else{
                             res.send({status: 0, message: 'INSERT_OK'});
+                        }
+                        con.release();
+                    }
+                );
+            });
+        }
+    }
+    
+    this.rank = function(data, res){
+        if(isNaN(data.voto) || data.voto <= 0 || data.voto > 5){
+            res.send({status: 1, message: 'ERROR_RANKING'});
+        }else{
+            connection.acquire(function(err, con){
+                con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [data.utente, data.rete_wifi, data.voto], function(err, result) {
+                        if(err){
+                            res.send({status: 1, message: 'ERROR_DB'})
+                        }else{
+                            /* Details about this query:
+                            
+                                The founder of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
+                                when user ranks the network, qualità is calculated like that because numero_recensioni+1(founder rank)+1(new rank).
+                            */
+                            con.query('UPDATE rete_wifi SET qualità = (((qualità*(numero_recensioni+1)) + ?) / (numero_recensioni+2)), numero_recensioni = numero_recensioni+1 '+
+                            'WHERE id = ?', [data.voto, data.rete_wifi], function(err, result) {
+                                if(err){
+                                    res.send({status: 1, message: 'ERROR_DB'})
+                                }else{
+                                    res.send({status: 0, message: 'RANKING_OK'});
+                                }
+                            });
                         }
                         con.release();
                     }

@@ -97,6 +97,10 @@ module.exports = {
         pin.insert(req.body, res);
     });
     
+    app.post('/pin/rank', function(req, res){
+        pin.rank(req.body, res);
+    });
+    
     
     
     
