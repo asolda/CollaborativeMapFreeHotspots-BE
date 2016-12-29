@@ -36,3 +36,4 @@ routes.configure(app); // Give express to configure option for end-points config
 var server = app.listen(config.server_port, config.server_ip_address, function() {
   console.log('Server active, listening on port ' + server.address().port + '.');
 });
+module.exports = server

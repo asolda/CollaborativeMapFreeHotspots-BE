@@ -1,8 +1,6 @@
 
 
 let connection = require("../connection");
-let Pin = require('../models/pin');
-
 //Require the dev-dependencies
 let chai = require('chai');
 let chaiHttp = require('chai-http');
