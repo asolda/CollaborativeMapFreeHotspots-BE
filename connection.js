@@ -18,7 +18,9 @@ function Connection() {
   };
   
   this.switch_db = function(new_db) {
-    this.pool = mysql.close();
+    if(this.pool!= null){
+    this.pool = this.pool.end();
+    }
     this.pool = mysql.createPool({
       connectionLimit: 10,
       host: '127.0.0.1',
