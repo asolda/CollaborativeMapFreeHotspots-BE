@@ -42,19 +42,23 @@ module.exports = {
         user.reset_password_request(req.body, res);
     });
     
-    app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
-        token.check(req.params.token).then(token => {
-            res.redirect(req.params.redirect_url+'?token='+token);
+    app.get('/user/reset_password/tokens/:token/redirect/:redirect_url', function(req, res){
+        token.check(req.params.token).then(token_got => {
+            res.send({status: 0, message: req.params.redirect_url+'?token='+token_got});
+            //res.redirect(req.params.redirect_url+'?token='+token);
         }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
     });
     
     app.get('/user/reset_password/token/:token/', function(req, res){
-        //codice
-        
+        token.check(req.params.token).then(token_gen => {
+            res.send({status: 0, message: 'TOKEN_OK'});
+        }).catch(token_gen => {
+            res.send({status: 1, message: 'ERROR_TOKEN'});
+        });
     });
     
     app.post('/user/reset_password/do/', function(req, res){
-        //codice
+        //user.set_password()
     });
     
     app.post('/user/login', function(req,res){
