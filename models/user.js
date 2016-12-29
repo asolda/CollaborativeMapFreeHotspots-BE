@@ -56,12 +56,15 @@ function User() {
                         token.generate(user.email).then(token_generated => {
                             console.log(user.email+","+token_generated);
                             if(token_generated != null){
+                                // Encode frontend URL to be parsed from express into GET requests
+                                var url = user.frontend_url.replace(/\//g, '%2F');
+                                
                                 // Send mail
                                 mailer.transporter.sendMail({
                                     from: config.smtp_google_user,
                                     to: user.email,
                                     subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
-                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+user.frontend_url
+                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+url
                                 }, function (err, responseStatus){
                                     mailer.transporter.close();
                                 });

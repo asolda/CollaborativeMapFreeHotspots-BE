@@ -47,7 +47,9 @@ module.exports = {
         console.log(req.params.token);
         token.check(req.params.token).then(token_got => {
            // res.send({status: 0, message: req.params.redirect_url+'?token='+token_got});
-            res.redirect('http://'+req.params.redirect_url+'?token='+token_got);
+           var url_parsed = req.params.redirect_url.replace('%2F', '/');
+           console.log(url_parsed);
+           res.redirect('http://'+url_parsed+'?token='+token_got);
         }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
     });
     
