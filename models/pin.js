@@ -112,5 +112,34 @@ function Pin(){
             });
         }
     }
+    
+    this.delete = function(data, res){
+        connection.acquire(function(err, con){
+                con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'});
+                    }else if(result[0].utente == data.utente){
+                        con.query('DELETE FROM segnalazione WHERE rete_wifi = ?', [data.rete_wifi], function(err, result) {
+                            if(err){
+                                res.send({status: 1, message: 'ERROR_DB'});
+                            }
+                        });
+                        con.query('DELETE FROM valuta WHERE rete_wifi = ?', [data.rete_wifi], function(err, result) {
+                            if(err){
+                                res.send({status: 1, message: 'ERROR_DB'});
+                            }
+                        });
+                        con.query('DELETE FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
+                            if(err){
+                                res.send({status: 1, message: 'ERROR_DB'});
+                            }
+                        });
+                        res.send({status: 0, message: 'DELETE_OK'});
+                    }else{
+                        res.send({status: 0, message: 'ERROR_IS_NOT_OWNER'});
+                    }
+                });
+        });
+    }
 }
 module.exports = new Pin();
