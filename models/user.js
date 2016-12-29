@@ -82,26 +82,38 @@ function User() {
             con.release();
         });
     };
+    
+    this.set_password = function(){
+        connection.acquire(function(err, con) {
+            con.query('UPDATE utente SET password=? WHERE email=?', [password, user.email], function(err, result){
+                if(err){
+                    res.send({status: 1, message: 'ERROR_DB'});
+                }else{
+                    res.send({status: 0, message: 'PASSWORD_UPDATED'});
+                }
+            });
+        });
+    }
         
-        this.login=function(req, res){
-            connection.acquire(function(err, con){
-                var mail=req.body.email, hash_psw = crypto.createHash('sha1').update(req.body.password).digest("hex");
-                if(email == null || email.length == 0 || !validateEmail(email)){
-                    res.send({status: 1, message: 'ERROR_CREDENTIALS'});
-                    }
-                     con.query('SELECT password FROM utenti WHERE email=?',[mail], function(err, result){
-                         if(result[0]==null||result[0].password==""||result[0].password==null){
-                         res.send({status:1, message: 'ERROR_CREDENTIALS'});}
-                         if(result.password==hash_psw){
-                             var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni
- 
-                         res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
-                         res.send(JSON.stringify(result));
-                         }       
-                     });
+    this.login=function(req, res){
+        connection.acquire(function(err, con){
+            var mail=req.body.email, hash_psw = crypto.createHash('sha1').update(req.body.password).digest("hex");
+            if(email == null || email.length == 0 || !validateEmail(email)){
+                res.send({status: 1, message: 'ERROR_CREDENTIALS'});
+            }
+            con.query('SELECT password FROM utenti WHERE email=?',[mail], function(err, result){
+                if(result[0]==null||result[0].password==""||result[0].password==null){
+                    res.send({status:1, message: 'ERROR_CREDENTIALS'});}
+                if(result.password==hash_psw){
+                    var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni
+     
+                    res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
+                    res.send(JSON.stringify(result));
+                }       
+            });
             con.release();
         });
-        };
+    };
         
     
     
