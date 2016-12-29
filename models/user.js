@@ -61,7 +61,7 @@ function User() {
                                     from: config.smtp_google_user,
                                     to: user.email,
                                     subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
-                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated
+                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+user.frontend_url
                                 }, function (err, responseStatus){
                                     mailer.transporter.close();
                                 });
