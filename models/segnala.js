@@ -12,10 +12,16 @@ function Segnala(){
             con.query('INSERT INTO segnalazione (utente, rete_wifi, tipo, dettagli) VALUES (?, ?, ?, ?)', [req.body.utente, req.body.rete_wifi, req.body.tipo, req.body.dettagli],
 				function(err, result) {
 					con.release();
-                    if(err!=null) res.send({status: 1, message: 'ERROR_DB', extra: err.message});
+                    if(err!=null) res.send({status: 1, message: 'ERROR_DB'});
                     else{
                         if(result.affectedRows>0){
-                            res.send({status: 0, message: 'REPORT_OK'});
+                            con.query('UPDATE rete_wifi SET numero_segnalazioni = numero_segnalazioni + 1 WHERE id = ?', function(err, result){
+                                if(err){
+                                    res.send({status: 1, message: 'ERROR_DB'});
+                                }else{
+                                    res.send({status: 0, message: 'REPORT_OK'});
+                                } 
+                            });
                         }
                     }
                 }
