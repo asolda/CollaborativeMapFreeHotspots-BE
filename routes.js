@@ -25,8 +25,8 @@ module.exports = {
         mailer.transporter.sendMail({
             from: config.smtp_google_user,
             to: 'finalgalaxy@gmail.com',
-            subject: 'Hai vinto un premio!',
-            text: 'Eeeee, volevi! Guarda che faccia!'
+            subject: 'Testsubj!',
+            text: 'Testtext!'
         }, function (err, responseStatus){
             mailer.transporter.close();
         });
@@ -42,19 +42,36 @@ module.exports = {
         user.reset_password_request(req.body, res);
     });
     
+    app.post('/user/reset_password/', function(req, res){
+        token.check(req.body.token);
+        //redirect(req.body.redirect);
+    });
+    
     app.get('/user/reset_password/token/:token/', function(req, res){
-        console.log('Token: '+req.params.token);
-        res.send({token: req.params.token});
+        //codice
+    });
+    
+    app.post('/user/reset_password/do/', function(req, res){
+        //codice
     });
     
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
         if(session_cookie!=null || session_cookie==""){
             console.log('You cannot login, session already active on your browser');
-            res.send({status: 1, message: 'CANNOT_LOGIN"});
+            res.send({status: 1, message: 'CANNOT_LOGIN'});
         } else
         user.login(req.body, res);
     });
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
