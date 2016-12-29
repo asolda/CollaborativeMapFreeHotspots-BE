@@ -2,6 +2,7 @@
 var user = require('./models/user');
 var pin = require('./models/pin');
 var segnala = require('./models/segnala');
+var token = require('./models/token');
 
 var config = require('./config');
 var mailer = require('./mailer');
@@ -42,10 +43,11 @@ module.exports = {
         user.reset_password_request(req.body, res);
     });
     
-    app.get('/user/reset_password/tokens/:token/redirect/:redirect_url', function(req, res){
+    app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
+        console.log(req.params.token);
         token.check(req.params.token).then(token_got => {
-            res.send({status: 0, message: req.params.redirect_url+'?token='+token_got});
-            //res.redirect(req.params.redirect_url+'?token='+token);
+           // res.send({status: 0, message: req.params.redirect_url+'?token='+token_got});
+            res.redirect('http://'+req.params.redirect_url+'?token='+token_got);
         }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
     });
     

@@ -22,7 +22,7 @@ function Token(){
                         });
                     }else{
                         con.release();
-                        reject(err);
+                        resolve(token);
                     }
                 });
             });
@@ -32,7 +32,7 @@ function Token(){
     this.check = function(token){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
-                con.query('SELECT COUNT(token) FROM token WHERE token = ?', [token], function(err, result){
+                con.query('SELECT COUNT(token) AS n_found FROM token WHERE token = ?', [token], function(err, result){
                     con.release();
                     if(err){
                         reject(err);
