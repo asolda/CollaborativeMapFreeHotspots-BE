@@ -86,16 +86,23 @@ function User() {
         });
     };
     
-    this.set_password = function(){
-        connection.acquire(function(err, con) {
-            con.query('UPDATE utente SET password=? WHERE email=?', [password, user.email], function(err, result){
-                if(err){
-                    res.send({status: 1, message: 'ERROR_DB'});
-                }else{
-                    res.send({status: 0, message: 'PASSWORD_UPDATED'});
-                }
+    this.set_password = function(email, password, res){
+        if(password == null || password.length==0 || !validatePassword(password)){
+            res.send({status: 1, message: 'ERROR_PASSWORD'});
+        }else if(password.length<8){
+            res.send({status: 1, message: 'ERROR_PASSWORD_LENGTH'});
+        }else{
+            connection.acquire(function(err, con) {
+                var hash_psw = crypto.createHash('sha1').update(password).digest("hex");
+                con.query('UPDATE utente SET password=? WHERE email=?', [hash_psw, email], function(err, result){
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'});
+                    }else{
+                        res.send({status: 0, message: 'PASSWORD_UPDATED'});
+                    }
+                });
             });
-        });
+        }
     }
         
     this.login=function(req, res){

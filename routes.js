@@ -63,8 +63,8 @@ module.exports = {
     
     app.post('/user/reset_password/do/', function(req, res){
         // check esistenza del token
-        token.get(req.params.token).then(token_data => {
-            user.set_password(token_data.email, req.body.password);
+        token.get(req.body.token).then(token_data => {
+            user.set_password(token_data.email, req.body.password, res);
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });

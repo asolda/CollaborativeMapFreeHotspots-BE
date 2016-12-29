@@ -56,7 +56,7 @@ function Token(){
                     if(err){
                         reject(err);
                     }else{
-                        resolve(result);
+                        resolve(result[0]);
                     }
                 });
             });
