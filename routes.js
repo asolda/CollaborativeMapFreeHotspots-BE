@@ -93,7 +93,9 @@ module.exports = {
 		pin.getlistpin(req, res);
 	});
     
-    
+    app.post('/pin/new', function(req, res){
+        pin.insert(req.body, res);
+    });
     
     
     
