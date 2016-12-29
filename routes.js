@@ -47,6 +47,15 @@ module.exports = {
         res.send({token: req.params.token});
     });
     
+    app.post('/user/login', function(req,res){
+        var session_cookie=req.cookies.actoken32;
+        if(session_cookie!=null || session_cookie==""){
+            console.log('You cannot login, session already active on your browser');
+            res.send({status: 1, message: 'CANNOT_LOGIN"});
+        } else
+        user.login(req.body, res);
+    });
+    
     
     
     
