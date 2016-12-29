@@ -47,6 +47,38 @@ function Token(){
             });
         });
     }
+    
+    this.get = function(token){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT email, token FROM token WHERE token = ?', [token], function(err, result){
+                    con.release();
+                    if(err){
+                        reject(err);
+                    }else{
+                        if(result[0].n_found > 0){
+                            resolve(result);
+                        }else{
+                            reject(err);
+                        }
+                    }
+                });
+            });
+        });
+    }
+    
+    this.delete = function(token){
+        connection.acquire(function(err, con){
+            con.query('DELETE FROM token WHERE token = ?', [token], function(err, result){
+                con.release();
+                if(err){
+                    reject(err);
+                }else{
+                    resolve(token);
+                }
+            });
+        });
+    }
        /* var token_generated=true;
         var token=null;
 		connection.acquire(function(err, con){
