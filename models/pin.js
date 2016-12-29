@@ -80,27 +80,35 @@ function Pin(){
             res.send({status: 1, message: 'ERROR_RANKING'});
         }else{
             connection.acquire(function(err, con){
-                con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [data.utente, data.rete_wifi, data.voto], function(err, result) {
-                        if(err){
-                            res.send({status: 1, message: 'ERROR_DB'})
-                        }else{
-                            /* Details about this query:
-                            
-                                The founder of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
-                                when user ranks the network, qualità is calculated like that because numero_recensioni+1(founder rank)+1(new rank).
-                            */
-                            con.query('UPDATE rete_wifi SET qualità = (((qualità*(numero_recensioni+1)) + ?) / (numero_recensioni+2)), numero_recensioni = numero_recensioni+1 '+
-                            'WHERE id = ?', [data.voto, data.rete_wifi], function(err, result) {
+                con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'});
+                    }else if(result[0].utente != data.utente){
+                        con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [data.utente, data.rete_wifi, data.voto], function(err, result) {
                                 if(err){
-                                    res.send({status: 1, message: 'ERROR_DB'})
+                                    res.send({status: 1, message: 'ERROR_DB'});
                                 }else{
-                                    res.send({status: 0, message: 'RANKING_OK'});
+                                    /* Details about this query:
+                                    
+                                        The owner of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
+                                        when user ranks the network, qualità is calculated like that because numero_recensioni+1(owner rank)+1(new rank).
+                                    */
+                                    con.query('UPDATE rete_wifi SET qualità = (((qualità*(numero_recensioni+1)) + ?) / (numero_recensioni+2)), numero_recensioni = numero_recensioni+1 '+
+                                    'WHERE id = ?', [data.voto, data.rete_wifi], function(err, result) {
+                                        if(err){
+                                            res.send({status: 1, message: 'ERROR_DB'});
+                                        }else{
+                                            res.send({status: 0, message: 'RANKING_OK'});
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                        con.release();
+                                con.release();
+                            }
+                        );
+                    }else{
+                        res.send({status: 1, message: 'ERROR_IS_OWNER'});
                     }
-                );
+                });
             });
         }
     }
