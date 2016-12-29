@@ -17,6 +17,7 @@ function Pin(){
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'})
                     }else{
+                        res.setHeader('Content-Type', 'application/json');
                         res.send(JSON.stringify(result));
                     }
 					con.release();
