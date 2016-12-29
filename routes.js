@@ -42,9 +42,10 @@ module.exports = {
         user.reset_password_request(req.body, res);
     });
     
-    app.post('/user/reset_password/', function(req, res){
-        token.check(req.body.token);
-        //redirect(req.body.redirect);
+    app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
+        token.check(req.params.token).then(token => {
+            res.redirect(req.params.redirect_url+'?token='+token);
+        }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
     });
     
     app.get('/user/reset_password/token/:token/', function(req, res){

@@ -33,18 +33,15 @@ function Token(){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
                 con.query('SELECT COUNT(token) FROM token WHERE token = ?', [token], function(err, result){
+                    con.release();
                     if(err){
-                        con.query('UPDATE token SET token = ?, creation_time = ? WHERE email = ?', [token, (new Date().getTime()/1000), email], function(err, result){
-                            con.release();
-                            if(err) {
-                                reject(err);
-                            }else{
-                                resolve(token);
-                            }
-                        });
-                    }else{
-                        con.release();
                         reject(err);
+                    }else{
+                        if(result[0].n_found > 0){
+                            resolve(token);
+                        }else{
+                            reject(err);
+                        }
                     }
                 });
             });
