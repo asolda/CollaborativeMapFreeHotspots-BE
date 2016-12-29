@@ -81,8 +81,17 @@ module.exports = {
     });
     
     
+    app.post('/segnala/', function(req, res){
+        segnala.report(req, res);
+    });
     
+    app.get('/pin/getinfo/:id', function(req, res){
+       pin.get(req, res); 
+    });
     
+    app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
+		pin.getlistpin(req, res);
+	});
     
     
     
@@ -110,13 +119,8 @@ module.exports = {
 		pin.testpoint(req, res);
     });
 	
-	app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
-		pin.getlistpin(req, res);
-	});
+	
     
-    app.post('/segnala/', function(req, res){
-        segnala.report(req, res);
-    });
  
     app.delete('/user/:email/', function(req, res) {
       user.delete(req.params.email, res);

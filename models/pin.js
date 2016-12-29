@@ -11,8 +11,6 @@ function Pin(){
   
 	this.getlistpin = function(req, res){
 		connection.acquire(function(err, con){
-            //con.query('SELECT id,latitudine,longitudine,numero_segnalazioni FROM rete_wifi WHERE latitudine >= '+req.params.latitudine+'-100 && '+
-			//			'latitudine <= '+req.params.latitudine+'+100 && longitudine >= '+req.params.longitudine+'-100 && longitudine <= '+req.params.longitudine+'+100',
             var md = req.params;
 			con.query('SELECT id,latitudine,longitudine,numero_segnalazioni FROM rete_wifi WHERE latitudine >= ?-? && '+
 						'latitudine <= ?+? && longitudine >= ?-? && longitudine <= ?+?',
@@ -29,6 +27,21 @@ function Pin(){
 			);
 		});
 		//res.send({status: 0, message: 'All OK', latitude: req.body.latitude, longitude: req.body.longitude});
-  };
+    };
+    
+    this.get = function(req, res){
+        connection.acquire(function(err, con){
+			con.query('SELECT ssid, qualità, necessità_login, restrizioni, altre_informazioni, range_wifi, utente FROM rete_wifi WHERE id=?', [req.params.id], function(err, result) {
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'})
+                    }else{
+                        res.setHeader('Content-Type', 'application/json');
+                        res.send(JSON.stringify(result));
+                    }
+					con.release();
+				}
+			);
+		});
+    }
 }
 module.exports = new Pin();
