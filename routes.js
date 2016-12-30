@@ -78,11 +78,16 @@ module.exports = {
             console.log('You cannot login, session already active on your browser');
             res.send({status: 1, message: 'CANNOT_LOGIN'});
         } else{
-            user.authorize(req.body, res).then(resu=>{
-                var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni     
-                //inserisci riga nella tabella sessione
-                res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
-                res.send({status:0, message:'LOGIN_SUCCESSFUL'});
+            user.authorize(req.body, res).then(userId=>{
+                var ipClient; //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
+                //da fare: ricavare indirizzo ip dal client
+                session.create(userId, ipClient).then(token=>{
+                    res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
+                    res.send({status:0, message:'LOGIN_SUCCESSFUL'});
+                }).catch(err=>{
+                    res.send({status:1, message: 'ERROR_GENERATING_SESSION'});
+                });
+                
             }).catch(err=>{
                 res.send({status:1, message:'ERROR_CREDENTIALS '+err});
             });
