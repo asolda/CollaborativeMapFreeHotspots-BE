@@ -3,7 +3,7 @@ var user = require('./models/user');
 var pin = require('./models/pin');
 var segnala = require('./models/segnala');
 var token = require('./models/token');
-
+var uuid=require('node-uuid');
 var config = require('./config');
 var mailer = require('./mailer');
 
@@ -73,11 +73,20 @@ module.exports = {
     
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
-        if(session_cookie!=null || session_cookie==""){
+        console.log("cookie contains:"+session_cookie);
+        if(session_cookie!=undefined||session_cookie!=null){
             console.log('You cannot login, session already active on your browser');
             res.send({status: 1, message: 'CANNOT_LOGIN'});
-        } else
-        user.login(req.body, res);
+        } else{
+            user.authorize(req.body, res).then(resu=>{
+                var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni     
+                //inserisci riga nella tabella sessione
+                res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
+                res.send({status:0, message:'LOGIN_SUCCESSFUL'});
+            }).catch(err=>{
+                res.send({status:1, message:'ERROR_CREDENTIALS '+err});
+            });
+    };
     });
     
     
