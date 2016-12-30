@@ -1,5 +1,6 @@
 var connection = require('../connection');
 var crypto = require('crypto');
+var Promise = require('promise');
 var config = require('../config');
 var mailer = require('../mailer');
 
