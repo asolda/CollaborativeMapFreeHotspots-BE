@@ -9,7 +9,7 @@ function Session(){
         var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni     
         return new Promise((resolve,reject)=>{
             connection.acquire(function(err,con){
-                con.query('INSERT INTO sessione (session_id, userAgent, utente, utimo_accesso, indirizzo_ip) values(?,?,?,?,?)', [token, 'test', userId, (new Date().getTime(), ipaddress],function(err, result){
+                con.query('INSERT INTO sessione (session_id, userAgent, utente, utimo_accesso, indirizzo_ip) values(?,?,?,?,?)', [token, 'test', userId, (new Date().getTime()), ipaddress],function(err, result){
                     con.release();
                     resolve(token);
                     catch(err){
