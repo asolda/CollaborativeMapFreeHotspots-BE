@@ -113,12 +113,12 @@ function User() {
             if(mail == null || mail.length == 0 || !validateEmail(mail)){
                 reject(err);
             }
-            con.query('SELECT password FROM utenti WHERE email=?',[mail], function(err2, result){
+            con.query('SELECT password, id FROM utenti WHERE email=?',[mail], function(err2, result){
                 if(result[0].password==null||result[0].password==""||result[0]==undefined){
                     reject(err2);
                 } else
                 if(result[0].password==hash_psw){
-                    resolve(1);
+                    resolve(result[0].id);
                 } else reject('Unexpected error');
             });
             con.release();
