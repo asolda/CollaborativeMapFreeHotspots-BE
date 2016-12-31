@@ -106,7 +106,7 @@ function User() {
         }
     }
         
-    this.authorize=function(user, res){
+    this.authorize=function(user){
         return new Promise((resolve, reject)=>{
             connection.acquire(function(err, con){
             var mail=user.email, hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");

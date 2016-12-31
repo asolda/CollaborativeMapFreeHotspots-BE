@@ -11,10 +11,9 @@ function Session(){
             connection.acquire(function(err,con){
                 con.query('INSERT INTO sessione (session_id, user_agent, utente, utimo_accesso, indirizzo_ip) values(?,?,?,?,?)', [token, 'test', userId, (new Date().getTime()), ipaddress],function(err, result){
                     con.release();
-                    resolve(token);
-                    catch(err){
+                    if(err){
                         reject(err);
-                    }
+                    } else resolve(token);
                 });
             });
         })
@@ -36,8 +35,34 @@ function Session(){
         })
     };
     
+    this.get = function(id){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT session_id, utente, user_agent, ultimo_accesso, indirizzo_ip FROM session WHERE session_id = ?', [id], function(err, result){
+                    con.release();
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(result[0]);
+                    }
+                });
+            });
+        });
+    }
+    
     this.updateTime=function(id){
-        //
+       return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('UPDATE sessione SET ultimo_accesso=? WHERE session_id=?', [(new Date.getTime()),id], function(err, result){
+                    con.release();
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(id);
+                    }
+                });
+            });
+        });
     };
     
 }
