@@ -13,10 +13,10 @@ chai.use(chaiHttp);
 describe('Pins', () => {
 
     /*
-      * Test the /GET route
+      * Testa la funzione di ricerca pin vicini
       */
     describe('/GET Pin', () => {
-        it('it should GET PINS list', function (done) {
+        it('Riceve la lista dei PIN wi-fi con parametri 1-2-3-4', function (done) {
 
             chai.request(server)
                 .get('/pin/get_networks/1/2/3/4')
@@ -28,6 +28,26 @@ describe('Pins', () => {
                     done();
                 });
         });
-    });
 
+    });
+    /*
+         * Testa la funzione di inserimento
+         */
+    describe('Inserimento rete', () => {
+        describe('Test con rete: { \'ssid\': \'Test1\', \'qualità\': 3, \'latitudine\': 1, \'longitudine\': 2, \'necessità_login\': 0, \'restrizioni\': \'Nessuna\', \'altre_informazioni\': \'PASS:Ciao\', \'range\': 20, \'utente\': 1 }', () => {
+        it('Dovrebbe inserire il PIN', function (done) {
+
+            chai.request(server)
+                .post('/pin/new')
+                .send({ 'ssid': 'Test1', 'qualità': 3, 'latitudine': 1, 'longitudine': 2, 'necessità_login': 0, 'restrizioni': 'Nessuna', 'altre_informazioni': 'PASS:Ciao', 'range': 20, 'utente': 1 })
+                .end((err, res) => {
+
+                    expect(res.body).to.have.property('status', 0);
+                    expect(res.body).to.have.property('message', 'INSERT_OK');
+                    done();
+                });
+        });
+
+    });
+        });
 });
