@@ -34,7 +34,7 @@ module.exports = {
         res.send({status: 0});
     });
     
-    // Verifica dell'esistenza del token nel DB.
+    // Verifica dell'esistenza del token nel DB (usato dagli scripts di preload in caso di ?token=TOKEN_VALUE).
     app.get('/token/:token/', function(req, res){
         token.check(req.params.token).then(token_gen => {
             res.send({status: 0, message: 'TOKEN_OK'});
@@ -54,9 +54,7 @@ module.exports = {
     // Endpoint, link inviato nella mail, per inserire un nuovo utente nel DB (success: creazione nuova riga in utente).
     app.get('/user/new/do/token/:token/email/:email/password/:password', function(req, res) {
         token.check(req.params.token).then(token_gen => {
-            user.create(req.params, res);
-            var url_parsed = req.params.redirect_url.replace('%2F', '/');
-            res.redirect('http://'+url_parsed);
+            user.create_do_request(req.params, res);
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });

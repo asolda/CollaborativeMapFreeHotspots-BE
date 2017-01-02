@@ -38,7 +38,6 @@ function User() {
                         if(result.length == 0){
                             // Generate token
                             token.generate(user.email).then(token_generated => {
-                                console.log(user.email+","+token_generated);
                                 if(token_generated != null){
                                     // Encode frontend URL to be parsed from express into GET requests
                                     var url = user.frontend_url.replace(/\//g, '%2F');
@@ -54,7 +53,7 @@ function User() {
                                         });
                                         
                                         // Send JSON to middleware informing mail is sent
-                                        res.send({status: 0, message: 'RESET_REQUEST_OK'});
+                                        res.send({status: 0, message: 'REGISTRATION_REQUEST_OK'});
                                 }else{
                                     res.send({status: 1, message: 'ERROR_DB'});
                                 }
@@ -62,7 +61,7 @@ function User() {
                                     res.send({status: 1, message: 'ERROR_DB'});
                             });
                         }else{
-                            res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                            res.send({status: 1, message: 'ERROR_EMAIL_ALREADY_EXISTS'});
                         }
                     }
                 });
@@ -71,28 +70,39 @@ function User() {
         });
     };
     
-    this.create = function(user, res){
-        connection.acquire(function(err, con) {
-            if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
-                res.send({status: 1, message: 'ERROR_EMAIL_PASSWORD'});
-            }else if(user.email == null || user.email.length==0 || !validateEmail(user.email)){
-                res.send({status: 1, message: 'ERROR_EMAIL'});
-            }else if(user.password == null || user.password.length==0 || !validatePassword(user.password)){
-                res.send({status: 1, message: 'ERROR_PASSWORD'});
-            }else if(user.password.length<8){
-                res.send({status: 1, message: 'ERROR_PASSWORD_LENGTH'});
-            }else{
-                var hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
-                con.query('INSERT INTO utente (email, password) VALUES (\'?\', \'?\')', [user.email, hash_psw], function(err, result) {
-                    con.release();
-                    if(err){
-                        res.send({status: 1, message: 'ERROR_DB'});
-                    }else{
-                        res.send({status: 0, message: 'INSERT_OK'});
-                    }
-                });
-            }
-            con.release();
+    this.create_do_request = function(user, res){
+        this.create(user).then(message_ok => {
+            var url_parsed = req.params.redirect_url.replace('%2F', '/');
+            res.redirect('http://'+url_parsed);
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
+    }
+    
+    this.create = function(user){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con) {
+                if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
+                    reject('ERROR_EMAIL_PASSWORD');
+                }else if(user.email == null || user.email.length==0 || !validateEmail(user.email)){
+                    reject('ERROR_EMAIL');
+                }else if(user.password == null || user.password.length==0 || !validatePassword(user.password)){
+                    reject('ERROR_PASSWORD');
+                }else if(user.password.length<8){
+                    reject('ERROR_PASSWORD_LENGTH');
+                }else{
+                    var hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
+                    con.query('INSERT INTO utente (email, password) VALUES (\'?\', \'?\')', [user.email, hash_psw], function(err, result) {
+                        con.release();
+                        if(err){
+                            reject('ERROR_DB');
+                        }else{
+                            resolve('INSERT_OK');
+                        }
+                    });
+                }
+                con.release();
+            });
         });
     }
     
@@ -141,23 +151,33 @@ function User() {
         });
     };
     
+    this.set_password_do_request = function(email, password, res){
+        this.set_password(email, password).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
+    }
+    
     this.set_password = function(email, password, res){
-        if(password == null || password.length==0 || !validatePassword(password)){
-            res.send({status: 1, message: 'ERROR_PASSWORD'});
-        }else if(password.length<8){
-            res.send({status: 1, message: 'ERROR_PASSWORD_LENGTH'});
-        }else{
-            connection.acquire(function(err, con) {
-                var hash_psw = crypto.createHash('sha1').update(password).digest("hex");
-                con.query('UPDATE utente SET password=? WHERE email=?', [hash_psw, email], function(err, result){
-                    if(err){
-                        res.send({status: 1, message: 'ERROR_DB'});
-                    }else{
-                        res.send({status: 0, message: 'PASSWORD_UPDATED'});
-                    }
+        return new Promise((resolve, reject) => {
+            if(password == null || password.length==0 || !validatePassword(password)){
+                reject('ERROR_PASSWORD');
+            }else if(password.length<8){
+                reject('ERROR_PASSWORD_LENGTH');
+            }else{
+                connection.acquire(function(err, con) {
+                    var hash_psw = crypto.createHash('sha1').update(password).digest("hex");
+                    con.query('UPDATE utente SET password=? WHERE email=?', [hash_psw, email], function(err, result){
+                        if(err){
+                            reject('ERROR_DB');
+                        }else{
+                            resolve('PASSWORD_UPDATED');
+                        }
+                    });
                 });
-            });
-        }
+            }
+        });
     }
         
     this.authorize=function(user){
