@@ -52,34 +52,38 @@ function User() {
                 res.send({status: 1, message: 'ERROR_EMAIL'});
             }else{
                 con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function(err, result){
-                    if(result[0].n_found > 0){
-                        // Generate token
-                        token.generate(user.email).then(token_generated => {
-                            console.log(user.email+","+token_generated);
-                            if(token_generated != null){
-                                // Encode frontend URL to be parsed from express into GET requests
-                                var url = user.frontend_url.replace(/\//g, '%2F');
-                                
-                                // Send mail
-                                mailer.transporter.sendMail({
-                                    from: config.smtp_google_user,
-                                    to: user.email,
-                                    subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
-                                    text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+url
-                                }, function (err, responseStatus){
-                                    mailer.transporter.close();
-                                });
-                                
-                                // Send JSON to middleware informing mail is sent
-                                res.send({status: 0, message: 'RESET_REQUEST_OK'});
-                            }else{
-                                res.send({status: 1, message: 'ERROR_DB'});
-                            }
-                        }).catch(err => {
-                            res.send({status: 1, message: 'ERROR_DB'});
-                        });
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'});
                     }else{
-                        res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                        if(result[0].n_found > 0){
+                            // Generate token
+                            token.generate(user.email).then(token_generated => {
+                                console.log(user.email+","+token_generated);
+                                if(token_generated != null){
+                                    // Encode frontend URL to be parsed from express into GET requests
+                                    var url = user.frontend_url.replace(/\//g, '%2F');
+                                     
+                                    // Send mail
+                                    mailer.transporter.sendMail({
+                                        from: config.smtp_google_user,
+                                        to: user.email,
+                                        subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
+                                        text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+url
+                                    }, function (err, responseStatus){
+                                            mailer.transporter.close();
+                                        });
+                                        
+                                        // Send JSON to middleware informing mail is sent
+                                        res.send({status: 0, message: 'RESET_REQUEST_OK'});
+                                }else{
+                                    res.send({status: 1, message: 'ERROR_DB'});
+                                }
+                            }).catch(err => {
+                                    res.send({status: 1, message: 'ERROR_DB'});
+                            });
+                        }else{
+                            res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                        }
                     }
                 });
             }
