@@ -84,24 +84,25 @@ function Pin(){
                 var array_params=[];
                 var query_str="";
                 if(!(data.restrizioni == null || data.restrizioni == '')){
-                    query_str.=", restrizioni=?";
+                    query_str+=", restrizioni=?";
                     array_params[i]=data.restrizioni;
                     i++;
                 }
-                query_str.=", range=?";
+                query_str+=", range_wifi=?";
                 array_params[i]=data.range;
                 i++;
                 if(!(data.altre_informazioni == null || data.altre_informazioni == '')){
-                    query_str.=", altre_informazioni=?";
+                    query_str+=", altre_informazioni=?";
                     array_params[i]=data.altre_informazioni;
                     i++;
                 }
                 query_str=query_str.substring(2);
                 
+                console.log("query="+query_str);
                 con.query('UPDATE rete_wifi SET '+query_str+' WHERE id = ?', array_params.concat(data.rete_wifi),
                     function(err, result) {
                         if(err){
-                            res.send({status: 1, message: 'ERROR_DB'})
+                            res.send({status: 1, message: 'ERROR_DB', extra: err.message})
                         }else{
                             res.send({status: 0, message: 'EDIT_OK'});
                         }
