@@ -117,6 +117,7 @@ function Pin(){
         if(isNaN(data.voto) || data.voto <= 0 || data.voto > 5){
             res.send({status: 1, message: 'ERROR_RANKING'});
         }else{
+            console.log(JSON.stringify(data));
             connection.acquire(function(err, con){
                 con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
                     if(err){
@@ -148,7 +149,7 @@ function Pin(){
                             res.send({status: 1, message: 'ERROR_IS_OWNER'});
                         }
                     }else{
-                        res.send({status: 1, message: 'ERROR_DB'})
+                        res.send({status: 1, message: 'ERROR_DB4'})
                     }
                 });
             });
