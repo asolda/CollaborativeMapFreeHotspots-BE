@@ -154,7 +154,7 @@ module.exports = {
     });
     
     // Endpoint per modificare un pin esistente.
-    // @params rete_wifi, range, restrizioni, altre_informazioni
+    // @params rete_wifi, range, restrizioni, altre_informazioni, [utente (da cambiare in sessione)]
     app.post('/pin/edit', function(req, res){
         pin.edit(req.body).then(message_ok => {
             res.send({status: 0, message: message_ok});
@@ -164,7 +164,7 @@ module.exports = {
     });
     
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
-    // @params rete_wifi, voto
+    // @params rete_wifi, voto, [utente (da cambiare in sessione)]
     app.post('/pin/rank', function(req, res){
         pin.rank(req.body).then(message_ok => {
             res.send({status: 0, message: message_ok});
@@ -174,7 +174,7 @@ module.exports = {
     });
     
     // Endpoint per cancellare un pin esistente.
-    // @params rete_wifi
+    // @params rete_wifi, [utente (da cambiare in sessione)]
     app.post('/pin/delete', function(req, res){
         pin.delete(req.body).then(message_ok => {
             res.send({status: 0, message: message_ok});

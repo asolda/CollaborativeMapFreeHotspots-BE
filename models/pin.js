@@ -77,35 +77,47 @@ function Pin(){
                 reject('ERROR_RANGE');
             }else{
                 connection.acquire(function(err, con){
-                    var i=0;
-                    var array_params=[];
-                    var query_str="";
-                    if(!(data.restrizioni == null || data.restrizioni == '')){
-                        query_str+=", restrizioni=?";
-                        array_params[i]=data.restrizioni;
-                        i++;
-                    }
-                    query_str+=", range_wifi=?";
-                    array_params[i]=data.range;
-                    i++;
-                    if(!(data.altre_informazioni == null || data.altre_informazioni == '')){
-                        query_str+=", altre_informazioni=?";
-                        array_params[i]=data.altre_informazioni;
-                        i++;
-                    }
-                    query_str=query_str.substring(2);
-                    
-                    console.log("query="+query_str);
-                    con.query('UPDATE rete_wifi SET '+query_str+' WHERE id = ?', array_params.concat(data.rete_wifi),
-                        function(err, result) {
-                            if(err){
-                                reject('ERROR_DB');
+                    con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }else if(result.length > 0){
+                            if(result[0].utente == data.utente){
+                                var i=0;
+                                var array_params=[];
+                                var query_str="";
+                                if(!(data.restrizioni == null || data.restrizioni == '')){
+                                    query_str+=", restrizioni=?";
+                                    array_params[i]=data.restrizioni;
+                                    i++;
+                                }
+                                query_str+=", range_wifi=?";
+                                array_params[i]=data.range;
+                                i++;
+                                if(!(data.altre_informazioni == null || data.altre_informazioni == '')){
+                                    query_str+=", altre_informazioni=?";
+                                    array_params[i]=data.altre_informazioni;
+                                    i++;
+                                }
+                                query_str=query_str.substring(2);
+                                
+                                console.log("query="+query_str);
+                                con.query('UPDATE rete_wifi SET '+query_str+' WHERE id = ?', array_params.concat(data.rete_wifi),
+                                    function(err, result) {
+                                        if(err){
+                                            reject('ERROR_DB');
+                                        }else{
+                                            resolve('EDIT_OK');
+                                        }
+                                        con.release();
+                                    }
+                                );
                             }else{
-                                resolve('EDIT_OK');
+                                reject('ERROR_IS_NOT_OWNER');
                             }
-                            con.release();
+                        }else{
+                            reject('ERROR_DB');
                         }
-                    );
+                    });
                 });
             }
         });
@@ -116,7 +128,6 @@ function Pin(){
             if(isNaN(data.voto) || data.voto <= 0 || data.voto > 5){
                 reject('ERROR_RANKING');
             }else{
-                console.log(JSON.stringify(data));
                 connection.acquire(function(err, con){
                     con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
                         if(err){
@@ -124,26 +135,25 @@ function Pin(){
                         }else if(result.length > 0){
                             if(result[0].utente != data.utente){
                                 con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [data.utente, data.rete_wifi, data.voto], function(err, result) {
-                                        if(err){
-                                            reject('ERROR_DB');
-                                        }else{
-                                            /* Details about this query:
-                                            
-                                                The owner of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
-                                                when user ranks the network, qualità is calculated like that because numero_recensioni+1(owner rank)+1(new rank).
-                                            */
-                                            con.query('UPDATE rete_wifi SET qualità = (((qualità*(numero_recensioni+1)) + ?) / (numero_recensioni+2)), numero_recensioni = numero_recensioni+1 '+
-                                            'WHERE id = ?', [data.voto, data.rete_wifi], function(err, result) {
-                                                if(err){
-                                                    reject('ERROR_DB');
-                                                }else{
-                                                    resolve('RANKING_OK');
-                                                }
-                                            });
-                                        }
-                                        con.release();
+                                    if(err){
+                                        reject('ERROR_DB');
+                                    }else{
+                                        /* Details about this query:
+                                        
+                                           The owner of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
+                                           when user ranks the network, qualità is calculated like that because numero_recensioni+1(owner rank)+1(new rank).
+                                        */
+                                        con.query('UPDATE rete_wifi SET qualità = (((qualità*(numero_recensioni+1)) + ?) / (numero_recensioni+2)), numero_recensioni = numero_recensioni+1 '+
+                                        'WHERE id = ?', [data.voto, data.rete_wifi], function(err, result) {
+                                            if(err){
+                                                reject('ERROR_DB');
+                                            }else{
+                                                resolve('RANKING_OK');
+                                            }
+                                        });
                                     }
-                                );
+                                    con.release();
+                                });
                             }else{
                                 reject('ERROR_IS_OWNER');
                             }
