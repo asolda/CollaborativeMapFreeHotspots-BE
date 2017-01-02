@@ -47,6 +47,7 @@ module.exports = {
     
     
     // Endpoint per richiedere l'inserimento di un nuovo utente (success: invio mail, gen. token).
+    // @params email, password, frontend_url
     app.post('/user/new/request', function(req, res) {
         user.create_user_request(req.body, res);
     });
@@ -73,7 +74,7 @@ module.exports = {
     // Nella homepage, grazie all'aggiunta di ?token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
         token.check(req.params.token).then(token_got => {
-           var url_parsed = req.params.redirect_url.replace('%2F', '/');
+           var url_parsed = decodeURIComponent(req.params.redirect_url);
            console.log(url_parsed);
            res.redirect('http://'+url_parsed+'?token='+token_got);
         }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));

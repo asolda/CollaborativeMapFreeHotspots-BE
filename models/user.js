@@ -35,19 +35,19 @@ function User() {
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'});
                     }else{
-                        if(result.length == 0){
+                        if(result.length == 0 || result[0].n_found == 0){
                             // Generate token
                             token.generate(user.email).then(token_generated => {
                                 if(token_generated != null){
                                     // Encode frontend URL to be parsed from express into GET requests
-                                    var url = user.frontend_url.replace(/\//g, '%2F');
+                                    var url = encodeURIComponent(user.frontend_url);
                                      
                                     // Send mail
                                     mailer.transporter.sendMail({
                                         from: config.smtp_google_user,
                                         to: user.email,
                                         subject: user.email+', conferma la registrazione del tuo account su AlwaysConnected',
-                                        text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/new/do/'+token_generated+'/redirect/'+url
+                                        text: 'Per confermare la registrazione, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/new/do/token/'+token_generated+'/email/'+user.email+'/password/'+user.password+'/redirect/'+url
                                     }, function (err, responseStatus){
                                             mailer.transporter.close();
                                         });
@@ -58,7 +58,7 @@ function User() {
                                     res.send({status: 1, message: 'ERROR_DB'});
                                 }
                             }).catch(err => {
-                                    res.send({status: 1, message: 'ERROR_DB'});
+                                    res.send({status: 1, message: 'ERROR_DB', extra: err.message});
                             });
                         }else{
                             res.send({status: 1, message: 'ERROR_EMAIL_ALREADY_EXISTS'});
