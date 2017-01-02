@@ -33,36 +33,56 @@ module.exports = {
         });
         res.send({status: 0});
     });
+    
+    // Verifica dell'esistenza del token nel DB.
+    app.get('/token/:token/', function(req, res){
+        token.check(req.params.token).then(token_gen => {
+            res.send({status: 0, message: 'TOKEN_OK'});
+        }).catch(err => {
+            res.send({status: 1, message: 'ERROR_TOKEN'});
+        });
+    });
 	
-	
-    app.post('/user/new/', function(req, res) {
-        user.create(req.body, res);
+    
+    
+    
+    // Endpoint per richiedere l'inserimento di un nuovo utente (success: invio mail, gen. token).
+    app.post('/user/new/request', function(req, res) {
+        user.create_user_request(req.body, res);
     });
     
+    // Endpoint, link inviato nella mail, per inserire un nuovo utente nel DB (success: creazione nuova riga in utente).
+    app.get('/user/new/do/token/:token/email/:email/password/:password', function(req, res) {
+        token.check(req.params.token).then(token_gen => {
+            user.create(req.params, res);
+            var url_parsed = req.params.redirect_url.replace('%2F', '/');
+            res.redirect('http://'+url_parsed);
+        }).catch(err => {
+            res.send({status: 1, message: 'ERROR_TOKEN'});
+        });
+    });
+    
+    
+    
+    
+    
+    // Endpoint per richiedere il recupero della propria password (success: invio mail, gen. token).
     app.post('/user/reset_password/request', function(req, res){
         user.reset_password_request(req.body, res);
     });
     
+    // Endpoint, link inviato nella mail, per permettere la reimpostazione della password nel caso il token sia valido (success: redirect alla home con ?token=TOKEN_VALUE.
+    // Nella homepage, grazie all'aggiunta di ?token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
-        console.log(req.params.token);
         token.check(req.params.token).then(token_got => {
-           // res.send({status: 0, message: req.params.redirect_url+'?token='+token_got});
            var url_parsed = req.params.redirect_url.replace('%2F', '/');
            console.log(url_parsed);
            res.redirect('http://'+url_parsed+'?token='+token_got);
         }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
     });
-    
-    app.get('/user/reset_password/token/:token/', function(req, res){
-        token.check(req.params.token).then(token_gen => {
-            res.send({status: 0, message: 'TOKEN_OK'});
-        }).catch(token_gen => {
-            res.send({status: 1, message: 'ERROR_TOKEN'});
-        });
-    });
-    
+ 
+    // Endpoint utilizzato per modificare la password dopo aver confermato l'operazione (success: password modificata).
     app.post('/user/reset_password/do/', function(req, res){
-        // check esistenza del token
         token.get(req.body.token).then(token_data => {
             user.set_password(token_data.email, req.body.password, res);
         }).catch(err => {
@@ -70,14 +90,15 @@ module.exports = {
         });
         //user.set_password()
     });
-    
+ 
+
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
         console.log("cookie contains:"+session_cookie);
         if(session_cookie!=undefined||session_cookie!=null){
             console.log('You cannot login, session already active on your browser');
             res.send({status: 1, message: 'CANNOT_LOGIN'});
-        } else{
+        }else{
             user.authorize(req.body).then(userId=>{
                 var ipClient; //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
                 //da fare: ricavare indirizzo ip dal client
@@ -91,7 +112,7 @@ module.exports = {
             }).catch(err2=>{
                 res.send({status:1, message:'ERROR_CREDENTIALS '+err2});
             });
-    };
+        };
     });
     
     
@@ -99,26 +120,32 @@ module.exports = {
         segnala.report(req, res);
     });
     
+    // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
     app.get('/pin/getinfo/:id', function(req, res){
        pin.get(req, res); 
     });
     
+    // Endpoint per visualizza mappa (success: lista di reti WiFi con le informazioni utili per la mappa in JSON).
     app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
     
+    // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
     app.post('/pin/new', function(req, res){
         pin.insert(req.body, res);
     });
     
+    // Endpoint per modificare un pin esistente.
     app.post('/pin/edit', function(req, res){
         pin.edit(req.body, res);
     });
     
+    // Endpoint per cancellare un pin esistente.
     app.post('/pin/delete', function(req, res){
         pin.delete(req.body, res);
     });
     
+    // Endpoint per valutare un pin esistente di cui NON si è proprietari.
     app.post('/pin/rank', function(req, res){
         pin.rank(req.body, res);
     });
@@ -133,8 +160,8 @@ module.exports = {
     
     
     
-	// Endpoints. MUST EDIT, WORK IN PROGRESS.
-    app.get('/user/', function(req, res) {
+	// Default endpoints. MUST EDIT, WORK IN PROGRESS.
+    /*app.get('/user/', function(req, res) {
       user.get(res);
     });
  
@@ -156,6 +183,6 @@ module.exports = {
 
     app.get('/user/search/:email/', function(req, res) {
       user.search(req.params.email, res);
-    });
+    });*/
   }
 };
