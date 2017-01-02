@@ -29,19 +29,20 @@ function Pin(){
 		//res.send({status: 0, message: 'All OK', latitude: req.body.latitude, longitude: req.body.longitude});
     };
     
-    this.get = function(req, res){
-        connection.acquire(function(err, con){
-			con.query('SELECT ssid, qualità, necessità_login, restrizioni, altre_informazioni, range_wifi, utente FROM rete_wifi WHERE id=?', [req.params.rete_wifi], function(err, result) {
-                    if(err){
-                        res.send({status: 1, message: 'ERROR_DB'});
-                    }else{
-                        res.setHeader('Content-Type', 'application/json');
-                        res.send(JSON.stringify(result));
+    this.get = function(rete_wifi){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT ssid, qualità, necessità_login, restrizioni, altre_informazioni, range_wifi, utente FROM rete_wifi WHERE id=?', [rete_wifi], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }else{
+                            resolve(result);
+                        }
+                        con.release();
                     }
-					con.release();
-				}
-			);
-		});
+                );
+            });
+        });
     }
     
     this.insert = function(data, res){

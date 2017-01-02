@@ -127,31 +127,42 @@ module.exports = {
     });
     
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
+    // @params id
     app.get('/pin/getinfo/:id', function(req, res){
-       pin.get(req, res); 
+        pin.get(req.params.id).then(result => {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(result));
+        }).catch(err => {
+            res.send({status: 1, message: err});
+        })
     });
     
     // Endpoint per visualizza mappa (success: lista di reti WiFi con le informazioni utili per la mappa in JSON).
+    // @params latitudine, longitudine, radius_lat, radius_long
     app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
     
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
+    // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, [utente (da cambiare in sessione)]
     app.post('/pin/new', function(req, res){
         pin.insert(req.body, res);
     });
     
     // Endpoint per modificare un pin esistente.
+    // @params rete_wifi, range, restrizioni, altre_informazioni
     app.post('/pin/edit', function(req, res){
         pin.edit(req.body, res);
     });
     
     // Endpoint per cancellare un pin esistente.
+    // @params rete_wifi
     app.post('/pin/delete', function(req, res){
         pin.delete(req.body, res);
     });
     
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
+    // @params rete_wifi, voto
     app.post('/pin/rank', function(req, res){
         pin.rank(req.body, res);
     });
