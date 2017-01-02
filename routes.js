@@ -56,7 +56,11 @@ module.exports = {
     // @params token, email, password, redirect_url
     app.get('/user/new/do/token/:token/email/:email/password/:password/redirect/:redirect_url', function(req, res) {
         token.check(req.params.token).then(token_gen => {
-            user.create_do_request(req.params, res);
+            token.delete(req.params.token).then(token_deleted => {
+                user.create_do_request(req.params, res);
+            }).catch(err => {
+                res.send({status: 1, message: 'ERROR_TOKEN'});
+            });
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });
@@ -69,7 +73,7 @@ module.exports = {
         user.reset_password_request(req.body, res);
     });
     
-    // Endpoint, link inviato nella mail, per permettere la reimpostazione della password nel caso il token sia valido (success: redirect alla home con ?token=TOKEN_VALUE.
+    // Endpoint, link inviato nella mail, per permettere la reimpostazione della password nel caso il token sia valido (success: redirect alla home con ?token=TOKEN_VALUE).
     // Nella homepage, grazie all'aggiunta di ?token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
     // @params token, redirect_url
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
