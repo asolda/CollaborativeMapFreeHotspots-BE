@@ -53,6 +53,7 @@ module.exports = {
     });
     
     // Endpoint, link inviato nella mail, per inserire un nuovo utente nel DB (success: creazione nuova riga in utente).
+    // @params token, email, password, redirect_url
     app.get('/user/new/do/token/:token/email/:email/password/:password/redirect/:redirect_url', function(req, res) {
         token.check(req.params.token).then(token_gen => {
             user.create_do_request(req.params, res);
@@ -63,28 +64,33 @@ module.exports = {
     
     
     // Endpoint per richiedere il recupero della propria password (success: invio mail, gen. token).
+    // @params email, frontend_url
     app.post('/user/reset_password/request', function(req, res){
         user.reset_password_request(req.body, res);
     });
     
     // Endpoint, link inviato nella mail, per permettere la reimpostazione della password nel caso il token sia valido (success: redirect alla home con ?token=TOKEN_VALUE.
     // Nella homepage, grazie all'aggiunta di ?token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
+    // @params token, redirect_url
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
+        var url_parsed = decodeURIComponent(req.params.redirect_url);
         token.check(req.params.token).then(token_got => {
-           var url_parsed = decodeURIComponent(req.params.redirect_url);
-           console.log(url_parsed);
            res.redirect('http://'+url_parsed+'?token='+token_got);
-        }).catch(err => res.send({status: 1, message: 'ERROR_TOKEN'}));
+        }).catch(err => res.redirect('http://'+url_parsed));
     });
  
     // Endpoint utilizzato per modificare la password dopo aver confermato l'operazione (success: password modificata).
+    // @params token, password
     app.post('/user/reset_password/do/', function(req, res){
         token.get(req.body.token).then(token_data => {
-            user.set_password(token_data.email, req.body.password, res);
+            token.delete(req.body.token).then(token_deleted => {
+                user.set_password_do_request(token_data.email, req.body.password, res);
+            }).catch(err => {
+                res.send({status: 1, message: 'ERROR_TOKEN'});
+            });
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });
-        //user.set_password()
     });
  
 

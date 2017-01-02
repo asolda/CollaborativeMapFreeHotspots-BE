@@ -125,7 +125,7 @@ function User() {
                                 console.log(user.email+","+token_generated);
                                 if(token_generated != null){
                                     // Encode frontend URL to be parsed from express into GET requests
-                                    var url = user.frontend_url.replace(/\//g, '%2F');
+                                    var url = encodeURIComponent(user.frontend_url);
                                      
                                     // Send mail
                                     mailer.transporter.sendMail({
@@ -134,16 +134,16 @@ function User() {
                                         subject: user.email+', conferma il recupero psw. account su AlwaysConnected',
                                         text: 'Per confermare il recupero, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/reset_password/token/'+token_generated+'/redirect/'+url
                                     }, function (err, responseStatus){
-                                            mailer.transporter.close();
-                                        });
+                                        mailer.transporter.close();
+                                    });
                                         
-                                        // Send JSON to middleware informing mail is sent
-                                        res.send({status: 0, message: 'RESET_REQUEST_OK'});
+                                    // Send JSON to middleware informing mail is sent
+                                    res.send({status: 0, message: 'RESET_REQUEST_OK'});
                                 }else{
                                     res.send({status: 1, message: 'ERROR_DB'});
                                 }
                             }).catch(err => {
-                                    res.send({status: 1, message: 'ERROR_DB'});
+                                res.send({status: 1, message: 'ERROR_DB'});
                             });
                         }else{
                             res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
@@ -163,7 +163,7 @@ function User() {
         });
     }
     
-    this.set_password = function(email, password, res){
+    this.set_password = function(email, password){
         return new Promise((resolve, reject) => {
             if(password == null || password.length==0 || !validatePassword(password)){
                 reject('ERROR_PASSWORD');
