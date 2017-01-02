@@ -132,8 +132,8 @@ module.exports = {
         pin.get(req.params.id).then(result => {
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(result));
-        }).catch(err => {
-            res.send({status: 1, message: err});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
         })
     });
     
@@ -146,60 +146,41 @@ module.exports = {
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
     // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, [utente (da cambiare in sessione)]
     app.post('/pin/new', function(req, res){
-        pin.insert(req.body, res);
+        pin.insert(req.body).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
     });
     
     // Endpoint per modificare un pin esistente.
     // @params rete_wifi, range, restrizioni, altre_informazioni
     app.post('/pin/edit', function(req, res){
-        pin.edit(req.body, res);
-    });
-    
-    // Endpoint per cancellare un pin esistente.
-    // @params rete_wifi
-    app.post('/pin/delete', function(req, res){
-        pin.delete(req.body, res);
+        pin.edit(req.body).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
     });
     
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
     // @params rete_wifi, voto
     app.post('/pin/rank', function(req, res){
-        pin.rank(req.body, res);
+        pin.rank(req.body).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
     });
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-	// Default endpoints. MUST EDIT, WORK IN PROGRESS.
-    /*app.get('/user/', function(req, res) {
-      user.get(res);
+    // Endpoint per cancellare un pin esistente.
+    // @params rete_wifi
+    app.post('/pin/delete', function(req, res){
+        pin.delete(req.body).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
     });
- 
- 
-    app.put('/user/', function(req, res) {
-      user.update(req.body, res);
-    });
-	
-	app.post('/pin/testcoordinates/', function(req, res) {
-		pin.testpoint(req, res);
-    });
-	
-	
-    
- 
-    app.delete('/user/:email/', function(req, res) {
-      user.delete(req.params.email, res);
-    });
-
-    app.get('/user/search/:email/', function(req, res) {
-      user.search(req.params.email, res);
-    });*/
   }
 };
