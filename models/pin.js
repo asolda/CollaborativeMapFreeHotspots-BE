@@ -31,7 +31,7 @@ function Pin(){
     
     this.get = function(req, res){
         connection.acquire(function(err, con){
-			con.query('SELECT ssid, qualità, necessità_login, restrizioni, altre_informazioni, range_wifi, utente FROM rete_wifi WHERE id=?', [req.params.id], function(err, result) {
+			con.query('SELECT ssid, qualità, necessità_login, restrizioni, altre_informazioni, range_wifi, utente FROM rete_wifi WHERE id=?', [req.params.rete_wifi], function(err, result) {
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'});
                     }else{
@@ -67,6 +67,43 @@ function Pin(){
                             res.send({status: 1, message: 'ERROR_DB'})
                         }else{
                             res.send({status: 0, message: 'INSERT_OK'});
+                        }
+                        con.release();
+                    }
+                );
+            });
+        }
+    }
+    
+    this.edit = function(data, res){
+        if(isNaN(data.range) || data.range <= 0){
+            res.send({status: 1, message: 'ERROR_RANGE'});
+        }else{
+            connection.acquire(function(err, con){
+                var i=0;
+                var array_params=[];
+                var query_str="";
+                if(!(data.restrizioni == null || data.restrizioni == '')){
+                    query_str.=", restrizioni=?";
+                    array_params[i]=data.restrizioni;
+                    i++;
+                }
+                query_str.=", range=?";
+                array_params[i]=data.range;
+                i++;
+                if(!(data.altre_informazioni == null || data.altre_informazioni == '')){
+                    query_str.=", altre_informazioni=?";
+                    array_params[i]=data.altre_informazioni;
+                    i++;
+                }
+                query_str=query_str.substring(2);
+                
+                con.query('UPDATE rete_wifi SET '+query_str+' WHERE id = ?', array_params.concat(data.rete_wifi),
+                    function(err, result) {
+                        if(err){
+                            res.send({status: 1, message: 'ERROR_DB'})
+                        }else{
+                            res.send({status: 0, message: 'EDIT_OK'});
                         }
                         con.release();
                     }

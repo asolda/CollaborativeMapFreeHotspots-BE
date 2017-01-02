@@ -111,6 +111,10 @@ module.exports = {
         pin.insert(req.body, res);
     });
     
+    app.post('/pin/edit', function(req, res){
+        pin.edit(req.body, res);
+    });
+    
     app.post('/pin/delete', function(req, res){
         pin.delete(req.body, res);
     });
