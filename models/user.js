@@ -72,9 +72,10 @@ function User() {
     
     this.create_do_request = function(user, res){
         this.create(user).then(message_ok => {
-            var url_parsed = req.params.redirect_url.replace('%2F', '/');
+            var url_parsed = decodeURIComponent(user.redirect_url);
             res.redirect('http://'+url_parsed);
         }).catch(message_error => {
+            console.log(message_error);
             res.send({status: 1, message: message_error});
         });
     }
@@ -83,16 +84,20 @@ function User() {
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con) {
                 if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
+                    con.release();
                     reject('ERROR_EMAIL_PASSWORD');
                 }else if(user.email == null || user.email.length==0 || !validateEmail(user.email)){
+                    con.release();
                     reject('ERROR_EMAIL');
                 }else if(user.password == null || user.password.length==0 || !validatePassword(user.password)){
+                    con.release();
                     reject('ERROR_PASSWORD');
                 }else if(user.password.length<8){
+                    con.release();
                     reject('ERROR_PASSWORD_LENGTH');
                 }else{
                     var hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
-                    con.query('INSERT INTO utente (email, password) VALUES (\'?\', \'?\')', [user.email, hash_psw], function(err, result) {
+                    con.query('INSERT INTO utente (email, password) VALUES (?, ?)', [user.email, hash_psw], function(err, result) {
                         con.release();
                         if(err){
                             reject('ERROR_DB');
@@ -101,7 +106,6 @@ function User() {
                         }
                     });
                 }
-                con.release();
             });
         });
     }

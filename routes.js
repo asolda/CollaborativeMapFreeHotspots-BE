@@ -53,16 +53,13 @@ module.exports = {
     });
     
     // Endpoint, link inviato nella mail, per inserire un nuovo utente nel DB (success: creazione nuova riga in utente).
-    app.get('/user/new/do/token/:token/email/:email/password/:password', function(req, res) {
+    app.get('/user/new/do/token/:token/email/:email/password/:password/redirect/:redirect_url', function(req, res) {
         token.check(req.params.token).then(token_gen => {
             user.create_do_request(req.params, res);
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });
     });
-    
-    
-    
     
     
     // Endpoint per richiedere il recupero della propria password (success: invio mail, gen. token).
