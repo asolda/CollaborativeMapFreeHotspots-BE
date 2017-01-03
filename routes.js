@@ -140,8 +140,8 @@ module.exports = {
     
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
     // @params id
-    app.get('/pin/getinfo/:id', function(req, res){
-        pin.get(req.params.id).then(result => {
+    app.get('/pin/getPinInfo/:pin_id', function(req, res){
+        pin.get(req.params.pin_id).then(result => {
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(result));
         }).catch(message_error => {
