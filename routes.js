@@ -143,6 +143,12 @@ module.exports = {
 		pin.getlistpin(req, res);
 	});
     
+    // Endpoint per gestione reti WiFi (success: lista di reti WiFi create dall'utente (da cambiare in sessione).
+    // @params utente
+    app.get('/pin/get_user_networks/:utente/', function(req, res){
+        pin.getuserpins(req, res);
+    });
+    
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
     // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, [utente (da cambiare in sessione)]
     app.post('/pin/new', function(req, res){

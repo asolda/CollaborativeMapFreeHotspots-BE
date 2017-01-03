@@ -19,8 +19,25 @@ function Pin(){
 				}
 			);
 		});
-		//res.send({status: 0, message: 'All OK', latitude: req.body.latitude, longitude: req.body.longitude});
     };
+    
+    this.getuserpins = function(req, res){
+		connection.acquire(function(err, con){
+			con.query('SELECT id,ssid,latitudine,longitudine,qualità FROM rete_wifi WHERE utente = ?', [req.params.utente],
+				function(err, result) {
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'})
+                    }else{
+                        res.setHeader('Content-Type', 'application/json');
+                        res.send(JSON.stringify(result));
+                    }
+					con.release();
+				}
+			);
+		});
+    };
+    
+    
     
     this.get = function(rete_wifi){
         return new Promise((resolve, reject) => {
