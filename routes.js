@@ -106,7 +106,7 @@ module.exports = {
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
-        }
+        });
     });
  
 
