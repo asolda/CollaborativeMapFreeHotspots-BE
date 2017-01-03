@@ -83,7 +83,7 @@ module.exports = {
         }).catch(err => res.redirect('http://'+url_parsed));
     });
  
-    // Endpoint utilizzato per modificare la password dopo aver confermato l'operazione (success: password modificata).
+    // Endpoint utilizzato per modificare la password, in caso in cui NON si è loggati (recupero), dopo aver confermato l'operazione (success: password modificata).
     // @params token, password
     app.post('/user/reset_password/do/', function(req, res){
         token.get(req.body.token).then(token_data => {
@@ -95,6 +95,18 @@ module.exports = {
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });
+    });
+    
+    // Endpoint utilizzato per modificare la password, in caso in cui si è loggati (modifica), dopo aver confermato l'operazione (success: password modificata).
+    // @params utente (da cambiare in sessione), password
+    app.post('/user/change_password/', function(req, res){
+        user.get(req.body.utente).then(data => {
+            user.set_password(data.email, req.body.password).then(message_ok => {
+                res.send({status: 0, message: message_ok});
+            }).catch(message_error => {
+                res.send({status: 1, message: message_error});
+            });
+        }
     });
  
 

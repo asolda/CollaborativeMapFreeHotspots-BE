@@ -19,6 +19,21 @@ function validatePassword(password){
 
 
 function User() {
+    this.get = function(utente){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT * FROM rete_wifi WHERE id=?', [rete_wifi], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }else{
+                            resolve(result);
+                        }
+                        con.release();
+                    }
+                );
+            });
+        });
+    }
     
     this.create_user_request = function(user, res){
         connection.acquire(function(err, con) {
