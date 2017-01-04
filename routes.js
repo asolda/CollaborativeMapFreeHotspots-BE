@@ -119,9 +119,11 @@ module.exports = {
             res.send({status: 1, message: 'CANNOT_LOGIN'});
         }else{
             user.authorize(req.body).then(userId=>{
-                var ipClient; //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
+                var ip_client = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                var user_agent = req.headers['user-agent'];
+                //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
                 //da fare: ricavare indirizzo ip dal client
-                session.create(userId, ipClient).then(token=>{
+                session.create(userId, ip_client, user_agent).then(token=>{
                     res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
                     res.send({status:0, message:'LOGIN_SUCCESSFUL'});
                 }).catch(err=>{

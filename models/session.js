@@ -5,11 +5,11 @@ var uuid=require('node-uuid');
 
 function Session(){
     
-    this.create=function(userId, ipaddress){  
+    this.create=function(userId, ipaddress, user_agent){  
         var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni     
         return new Promise((resolve,reject)=>{
             connection.acquire(function(err,con){
-                con.query('INSERT INTO sessione (session_id, user_agent, utente, utimo_accesso, indirizzo_ip) values(?,?,?,?,?)', [token, 'test', userId, (new Date().getTime()), ipaddress],function(err, result){
+                con.query('INSERT INTO sessione (session_id, user_agent, utente, utimo_accesso, indirizzo_ip) values(?,?,?,?,?)', [token, user_agent, userId, (new Date().getTime()), ipaddress],function(err, result){
                     con.release();
                     if(err){
                         reject(err);
@@ -17,7 +17,7 @@ function Session(){
                 });
             });
         });
-    };
+    }
     
    
     this.drop=function(id){
@@ -33,7 +33,7 @@ function Session(){
                 });
             });
         })
-    };
+    }
     
     this.get = function(id){
         return new Promise((resolve, reject) => {
@@ -63,7 +63,7 @@ function Session(){
                 });
             });
         });
-    };
+    }
     
     this.check=function(id){
         return new Promise((resolve, reject) =>{
@@ -127,4 +127,4 @@ function Session(){
     
 }
 
-module.export=new Session();
+module.exports=new Session();
