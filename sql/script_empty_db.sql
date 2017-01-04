@@ -55,7 +55,7 @@ CREATE TABLE valuta (
 -- Creazione tabella sessioni
 DROP TABLE IF EXISTS sessione;
 CREATE TABLE sessione (
-  session_id char(32) NOT NULL,
+  session_id char(64) NOT NULL,
   user_agent varchar(30) NOT NULL,
   indirizzo_ip varchar(15) NOT NULL,
   ultimo_accesso date NOT NULL,
