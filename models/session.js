@@ -66,12 +66,14 @@ function Session(){
     }
     
     this.check=function(id){
+        console.log('token='+ id);
         return new Promise((resolve, reject) =>{
             connection.acquire(function(err, con){
-                con.query('SELECT COUNT(session_id) AS n_found, utente FROM sessione WHERE session_id=?', [id], function(err, result){
+                con.query('SELECT utente FROM sessione WHERE session_id=?', [id], function(err, result){
+                    console.log(JSON.stringify(result));
                     con.release();
                     if(err) reject(err);
-                    if(result[0].n_found==undefined||result[0].n_found==null||result[0].n_found==''){
+                    if(result[0].utente==undefined||result[0].utente==null||result[0].utente==''){
                         reject('ERROR: session not found');
                     } else resolve(result[0].utente);      
                 });                
@@ -79,7 +81,7 @@ function Session(){
         });        
     }
     
-    this.getUser=function(id){
+   /* this.getUser=function(id){
         return new Promise((resolve,reject) =>{
             connection.acquire(function(err, con){
                 con.query('SELECT utente FROM sessione WHERE session_id=?', [id], function(err, result){
@@ -91,7 +93,7 @@ function Session(){
                 });
             });
         });
-    }
+    }*/
     
     
     
