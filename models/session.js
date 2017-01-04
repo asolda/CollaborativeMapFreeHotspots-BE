@@ -5,7 +5,7 @@ var uuid=require('node-uuid');
 
 function Session(){
     
-    this.create=function(userId, ipaddress){        
+    this.create=function(userId, ipaddress){  
         var token=crypto.createHash('sha256').update(uuid.v1()).update(crypto.randomBytes(256)).digest("hex");//crea il token senza possibilità di collisioni     
         return new Promise((resolve,reject)=>{
             connection.acquire(function(err,con){
@@ -16,7 +16,7 @@ function Session(){
                     } else resolve(token);
                 });
             });
-        })
+        });
     };
     
    
@@ -90,6 +90,7 @@ function Session(){
                     } else resolve(result[0].utente);      
                 });
             });
+        });
     }
     
     

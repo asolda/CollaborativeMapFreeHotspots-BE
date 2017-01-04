@@ -3,6 +3,7 @@ var user = require('./models/user');
 var pin = require('./models/pin');
 var segnala = require('./models/segnala');
 var token = require('./models/token');
+var session = require('./models/session');
 var uuid=require('node-uuid');
 var config = require('./config');
 var mailer = require('./mailer');

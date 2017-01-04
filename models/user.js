@@ -206,13 +206,17 @@ function User() {
             if(mail == null || mail.length == 0 || !validateEmail(mail)){
                 reject(err);
             }
-            con.query('SELECT password, id FROM utenti WHERE email=?',[mail], function(err2, result){
-                if(result[0].password==null||result[0].password==""||result[0]==undefined){
-                    reject(err2);
-                } else
-                if(result[0].password==hash_psw){
-                    resolve(result[0].id);
-                } else reject('Unexpected error');
+            con.query('SELECT password, id FROM utente WHERE email=?',[mail], function(err2, result){
+                if(err2){
+                    reject(err2.message);
+                }else{
+                    if(result[0].password==null||result[0].password==""||result[0]==undefined){
+                        reject('ERROR_CREDENTIALS');
+                    } else
+                    if(result[0].password==hash_psw){
+                        resolve(result[0].id);
+                    } else reject('Unexpected error');
+                }
             });
             con.release();
         });
