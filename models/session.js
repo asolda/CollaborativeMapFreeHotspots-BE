@@ -72,10 +72,17 @@ function Session(){
                 con.query('SELECT utente FROM sessione WHERE session_id=?', [id], function(err, result){
                     console.log(JSON.stringify(result));
                     con.release();
-                    if(err) reject(err);
-                    if(result[0].utente==undefined||result[0].utente==null||result[0].utente==''){
+                    if(err){
+                        reject(err);
+                    }else if(result.length > 0){
+                        if(result[0].utente==undefined||result[0].utente==null||result[0].utente==''){
+                            reject('ERROR: session not found');
+                        }else{
+                            resolve(result[0].utente);      
+                        }
+                    }else{
                         reject('ERROR: session not found');
-                    } else resolve(result[0].utente);      
+                    }
                 });                
             });                       
         });        
