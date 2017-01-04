@@ -123,16 +123,15 @@ module.exports = {
                 var user_agent = req.headers['user-agent'] || 'Unknown';
                 console.log(ip_client+","+user_agent);
                 //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
-                //da fare: ricavare indirizzo ip dal client
                 session.create(userId, ip_client, user_agent).then(token=>{
                     res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
                     res.send({status:0, message:{user: userId}});
                 }).catch(err=>{
-                    res.send({status:1, message: 'ERROR_GENERATING_SESSION'+err.message});
+                    res.send({status:1, message: 'ERROR_GENERATING_SESSION'});
                 });
                 
             }).catch(err2=>{
-                res.send({status:1, message:'ERROR_CREDENTIALS '+err2});
+                res.send({status:1, message:'ERROR_CREDENTIALS'});
             });
         };
     });

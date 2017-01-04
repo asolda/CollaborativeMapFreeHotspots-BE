@@ -76,12 +76,12 @@ function Session(){
                         reject(err);
                     }else if(result.length > 0){
                         if(result[0].utente==undefined||result[0].utente==null||result[0].utente==''){
-                            reject('ERROR: session not found');
+                            reject('ERROR_SESSION_NOT_FOUND');
                         }else{
                             resolve(result[0].utente);      
                         }
                     }else{
-                        reject('ERROR: session not found');
+                        reject('ERROR_SESSION_NOT_FOUND');
                     }
                 });                
             });                       
