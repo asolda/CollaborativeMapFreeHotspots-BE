@@ -138,7 +138,11 @@ module.exports = {
     });
     
     app.get('/session/check', function(req, res){
-        
+        session.check(req.cookies.actoken32).then(userId =>{
+            res.send({status:0, message:{user: userId}});
+        }).catch(err=>{
+            res.send({status:1, message: err.message||err});
+        });
     });
     
     app.post('/segnala/', function(req, res){

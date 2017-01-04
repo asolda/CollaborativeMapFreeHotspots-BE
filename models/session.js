@@ -68,12 +68,12 @@ function Session(){
     this.check=function(id){
         return new Promise((resolve, reject) =>{
             connection.acquire(function(err, con){
-                con.query('SELECT COUNT(session_id) AS n_found FROM sessione WHERE session_id=?', [token], function(err, result){
+                con.query('SELECT COUNT(session_id) AS n_found, utente FROM sessione WHERE session_id=?', [id], function(err, result){
                     con.release();
                     if(err) reject(err);
                     if(result[0].n_found==undefined||result[0].n_found==null||result[0].n_found==''){
                         reject('ERROR: session not found');
-                    } else resolve(true);      
+                    } else resolve(result[0].utente);      
                 });                
             });                       
         });        
