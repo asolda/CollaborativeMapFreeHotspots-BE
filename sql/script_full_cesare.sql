@@ -136,7 +136,9 @@ ALTER TABLE `sessione`
 --
 ALTER TABLE `utente`
   ADD PRIMARY KEY (`id`);
-
+-- Attributo unico email
+ALTER TABLE 'utente'
+ADD UNIQUE ('email')
 --
 -- Indexes for table `valuta`
 --

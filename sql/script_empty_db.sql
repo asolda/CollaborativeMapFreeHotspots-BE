@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS rete_wifi;
 CREATE TABLE rete_wifi (
   id int(11) NOT NULL,
   ssid varchar(30) NOT NULL,
-  qualità float NOT NULL,
+  qualitï¿½ float NOT NULL,
   latitudine double NOT NULL,
   longitudine double NOT NULL,
   numero_recensioni int(11) DEFAULT '0',
-  necessità_login tinyint(1) DEFAULT '0',
+  necessitï¿½_login tinyint(1) DEFAULT '0',
   restrizioni text,
   altre_informazioni text,
   range_wifi int(11) NOT NULL DEFAULT '0',
@@ -65,7 +65,7 @@ CREATE TABLE sessione (
 -- Creazione tabella token
 CREATE TABLE token (
   token varchar(44) NOT NULL,
-  email varchar(30) NOT NULL,
+  email varchar(30) NOT NULL ,
   creation_time int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -96,6 +96,9 @@ ALTER TABLE sessione
 -- Chiave primaria per la tabella utente
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
+-- Attributo unico email
+ALTER TABLE utente
+ADD UNIQUE (email)
   
 -- Chiavi primarie per valuta + chiavi esterne
 ALTER TABLE valuta
