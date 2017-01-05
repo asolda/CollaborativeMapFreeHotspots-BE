@@ -221,29 +221,34 @@ function User() {
     this.authorize=function(user){
         return new Promise((resolve, reject)=>{
             connection.acquire(function(err, con){
-            var mail=user.email, hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
-            if(mail == null || mail.length == 0 || !validateEmail(mail)){
-                reject(err);
-            }
-            con.query('SELECT password, id FROM utente WHERE email=?',[mail], function(err2, result){
-                if(err2){
-                    reject(err2.message);
+                if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
+                    reject('ERROR_EMAIL_PASSWORD');
+                }else if(user.email == null || user.email.length==0 || !validateEmail(user.email)){
+                    reject('ERROR_EMAIL');
+                }else if(user.password == null || user.password.length==0){
+                    reject('ERROR_PASSWORD');
                 }else{
-                    if(result[0].password==null||result[0].password==""||result[0]==undefined){
-                        reject('ERROR_CREDENTIALS');
-                    } else
-                    if(result[0].password==hash_psw){
-                        resolve(result[0].id);
-                    } else reject('Unexpected error');
+                    var mail=user.email, hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
+                    
+                    con.query('SELECT password, id FROM utente WHERE email=?',[mail], function(err2, result){
+                        if(err2){
+                            reject(err2.message);
+                        }else{
+                            if(result[0].password==null||result[0].password==""||result[0]==undefined){
+                                reject(err2.message);
+                            }else if(result[0].password==hash_psw){
+                                resolve(result[0].id);
+                            }else reject('ERROR_CREDENTIALS');
+                        }
+                    });
+                    con.release();
                 }
             });
-            con.release();
-        });
         });
     };
     
     this.delete_request = function(user_id, data, res){
-        user.get(user_id).then(user => {
+        this.get(user_id).then(user => {
             token.generate(user.email).then(token_generated => {
                 // Encode frontend URL to be parsed from express into GET requests
                 var url = encodeURIComponent(data.frontend_url);
