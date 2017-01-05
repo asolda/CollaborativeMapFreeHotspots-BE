@@ -194,7 +194,7 @@ module.exports = {
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
-        }
+        });
     });
     
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
