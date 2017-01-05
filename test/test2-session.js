@@ -7,19 +7,23 @@ let chaiHttp = require('chai-http');
 let server = require("../app");
 let should = chai.should();
 connection.switch_db("test1");
-let session = require("../models/session");
+let user= require("../models/user");
 var expect = chai.expect;
 chai.use(chaiHttp);
-var Cookies;
+var id;
 //Our parent block
 describe('Session', () => {
 
     /*
-      * Testa la funzione di ricerca pin vicini
+      * Testa la funzione di login
       */
     describe('Crea la sessione', () => {
         describe('restituisce il cookie di sessione', () => {
             it('Crea una sessione', function (done) {
+                user.getid('Test1@gmail.com')
+                .then(result =>{
+                id=result[0];
+                });
 
                 chai.request(server)
                     .post('/user/login')

@@ -8,7 +8,7 @@ let server = require("../app");
 let should = chai.should();
 connection.switch_db("test1");
 var expect = chai.expect;
-let user = require("../models/user");
+
 chai.use(chaiHttp);
 //Our parent block
 describe('Pins', () => {
@@ -32,7 +32,7 @@ describe('Pins', () => {
 
     });
     /*
-         * Testa la funzione di inserimento
+         * Testa la funzione di inserimento pin usando l'agent per mantenere la sessione
          */
     describe('Inserimento rete', () => {
         describe('Test con rete: { \'ssid\': \'Test1\', \'qualità\': 3, \'latitudine\': 1, \'longitudine\': 2, \'necessità_login\': 0, \'restrizioni\': \'Nessuna\', \'altre_informazioni\': \'PASS:Ciao\', \'range\': 20, \'utente\': 1 }', () => {
@@ -44,21 +44,11 @@ describe('Pins', () => {
                     .post('/user/login')
                     .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
                     .then((res) => {
-                        expect(res).to.have.cookie('actoken32');
-                        user.getid(email)
-                        .then((result) =>{
-                            
-                            id = result;
-                        }).catch(err => {
-                res.send({status: 1, message: err});
-            });
-                       
-
-console.log(id);
-                        return agent
+                        expect(res).to.have.cookie('actoken32')
+                     return agent
 
                             .post('/pin/new')
-                            .send({ 'ssid': 'Test1', 'qualità': 3, 'latitudine': 1, 'longitudine': 2, 'necessità_login': 0, 'restrizioni': 'Nessuna', 'altre_informazioni': 'PASS:Ciao', 'range': 20, 'utente': id })
+                            .send({ 'ssid': 'Test1', 'qualità': 3, 'latitudine': 1, 'longitudine': 2, 'necessità_login': 0, 'restrizioni': 'Nessuna', 'altre_informazioni': 'PASS:Ciao', 'range': 20 })
                             .then((res) => {
                             
                                 expect(res.body).to.have.property('status', 0);
