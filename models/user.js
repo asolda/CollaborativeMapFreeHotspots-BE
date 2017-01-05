@@ -36,6 +36,26 @@ function User() {
         });
     }
     
+    this.getid = function(email){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT id FROM utente WHERE email=?', [email], function(err, result) {
+                        if(err){
+                        reject(err);
+                    }else if(result.length > 0){
+                        if(result[0].id==undefined||result[0].id==null||result[0].id==''){
+                            reject('ERROR_USER_NOT_FOUND');
+                        }else{
+                            resolve(result[0].id);      
+                        }
+                    }else{
+                        reject('ERROR_USER_NOT_FOUND');
+                    }
+                });
+            });
+        });
+    }
+    
     this.create_user_request = function(user, res){
         connection.acquire(function(err, con) {
             if((user.email == null || user.email.length==0) && (user.password == null || user.password.length==0)){
