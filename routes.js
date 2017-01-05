@@ -172,11 +172,11 @@ module.exports = {
     });
     
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
-    // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, [utente (da cambiare in sessione)]
+    // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range (ed utente tramite la sessione)
     app.post('/pin/new', function(req, res){
-        session.check(req.cookies.actoken32).then(result=> {
-            if(result) {
-                pin.insert(req.body).then(message_ok => {
+        session.check(req.cookies.actoken32).then(user_id=> {
+            if(user_id) {
+                pin.insert(user_id, req.body).then(message_ok => {
                     res.send({status: 0, message: message_ok});
                 }).catch(message_error => {
                     res.send({status: 1, message: message_error});

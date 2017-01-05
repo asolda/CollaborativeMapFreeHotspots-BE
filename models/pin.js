@@ -55,7 +55,7 @@ function Pin(){
         });
     }
     
-    this.insert = function(data){
+    this.insert = function(utente, data){
         return new Promise((resolve, reject) => {
             if(data.ssid == null || data.ssid.length==0){
                 reject('ERROR_SSID');
@@ -73,7 +73,7 @@ function Pin(){
                 connection.acquire(function(err, con){
                     con.query('INSERT INTO rete_wifi (ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range_wifi, utente) '+
                                 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [data.ssid, data.qualità, data.latitudine, data.longitudine, data.necessità_login, data.restrizioni,
-                                                                        data.altre_informazioni, data.range, data.utente],
+                                                                        data.altre_informazioni, data.range, utente],
                         function(err, result) {
                             if(err){
                                 reject('ERROR_DB');
