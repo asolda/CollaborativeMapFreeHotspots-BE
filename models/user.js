@@ -244,7 +244,7 @@ function User() {
     
     this.delete_request = function(user_id, data, res){
         connection.acquire(function(err, con) {
-                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user_id], function(err, result){
+                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE id=?', [user_id], function(err, result){
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'});
                     }else{
