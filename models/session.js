@@ -66,11 +66,9 @@ function Session(){
     }
     
     this.check=function(id){
-        console.log('token='+ id);
         return new Promise((resolve, reject) =>{
             connection.acquire(function(err, con){
                 con.query('SELECT utente FROM sessione WHERE session_id=?', [id], function(err, result){
-                    console.log(JSON.stringify(result));
                     con.release();
                     if(err){
                         reject(err);

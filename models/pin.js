@@ -88,7 +88,7 @@ function Pin(){
         });
     }
     
-    this.edit = function(data){
+    this.edit = function(utente, data){
         return new Promise((resolve, reject) => {
             if(isNaN(data.range) || data.range <= 0){
                 reject('ERROR_RANGE');
@@ -98,7 +98,7 @@ function Pin(){
                         if(err){
                             reject('ERROR_DB');
                         }else if(result.length > 0){
-                            if(result[0].utente == data.utente){
+                            if(result[0].utente == utente){
                                 var i=0;
                                 var array_params=[];
                                 var query_str="";
