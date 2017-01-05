@@ -152,7 +152,7 @@ ALTER TABLE valuta
 -- Query di popolazione
 INSERT INTO utente (id, email, password) VALUES
 (1, 'asolda92@gmail.com', '74583a72809d2c308518ceaa966047d97c261f54'),
-(2, 'finalgalaxy@gmail.com', 'e842a311179ec6cd39a674ea85529c0e6aad8002'),
+(2, 'finalgalaxy@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
 (3, 'cesaretucci95@gmail.com', '5fb0076337e0df3de0e7162d3bcf9788e3b9758d'),
 (4, 'gianluca17@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
 (5, 'james1@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),

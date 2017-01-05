@@ -116,7 +116,7 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id =>{
             user.delete_request(user_id, req.body, res);
         }).catch(err => {
-            res.send({status: 1, message: 'ERROR_SESSION'});
+            res.send({status: 1, message: 'ERROR_SESSION'+err.message});
         });
     });
     
@@ -151,25 +151,21 @@ module.exports = {
 
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
-        console.log("cookie contains:"+session_cookie);
         if(session_cookie!=undefined||session_cookie!=null){
-            console.log('You cannot login, session already active on your browser');
             res.send({status: 1, message: 'CANNOT_LOGIN'});
         }else{
-            user.authorize(req.body).then(user_id=>{
+            user.authorize(req.body).then(user_id => {
                 var ip_client = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 var user_agent = req.headers['user-agent'] || 'Unknown';
-                console.log(ip_client+","+user_agent);
                 //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
                 session.create(user_id, ip_client, user_agent).then(token=>{
                     res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
-                    res.send({status:0, message:{user: user_id}});
+                    res.send({status: 0, message: {user: user_id}});
                 }).catch(err=>{
-                    res.send({status:1, message: 'ERROR_GENERATING_SESSION'});
+                    res.send({status: 1, message: 'ERROR_GENERATING_SESSION'});
                 });
-                
-            }).catch(err2=>{
-                res.send({status:1, message:'ERROR_CREDENTIALS'});
+            }).catch(message_error => {
+                res.send({status: 1, message: message_error});
             });
         };
     });
