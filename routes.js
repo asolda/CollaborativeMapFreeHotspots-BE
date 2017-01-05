@@ -75,12 +75,12 @@ module.exports = {
     });
     
     // Endpoint, link inviato nella mail, per permettere la reimpostazione della password nel caso il token sia valido (success: redirect alla home con ?token=TOKEN_VALUE).
-    // Nella homepage, grazie all'aggiunta di ?token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
+    // Nella homepage, grazie all'aggiunta di ?action=RESET_PASSWORD&token=TOKEN_VALUE, verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
     // @params token, redirect_url
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
         var url_parsed = decodeURIComponent(req.params.redirect_url);
         token.check(req.params.token).then(token_got => {
-           res.redirect('http://'+url_parsed+'?token='+token_got);
+           res.redirect('http://'+url_parsed+'?action=RESET_PASSWORDtoken='+token_got);
         }).catch(err => res.redirect('http://'+url_parsed));
     });
  
@@ -109,7 +109,43 @@ module.exports = {
             });
         });
     });
+
+    // Endpoint per richiedere l'eliminazione dell'account (success: invio mail, gen. token).
+    // @params frontend_url, utente (cookie)
+    app.post('/user/delete/request', function(req, res){
+        session.check(req.cookies.actoken32).then(user_id =>{
+            user.delete_request(user_id, req.body, res);
+        });
+    });
+    
+    // Endpoint, link inviato nella mail, per permettere l'eliminazione dell'account nel caso il token sia valido (success: redirect alla home con ?action=DELETE_USER&token=TOKEN_VALUE).
+    // Nella homepage, grazie all'aggiunta di tale 'query', verrà inviata un'ulteriore richiesta sull'endpoint /token/:token per check sulla validità del token.
+    // @params token, redirect_url 
+    app.get('/user/delete/token/:token/redirect/:redirect_url', function(req, res){
+        var url_parsed = decodeURIComponent(req.params.redirect_url);
+        token.check(req.params.token).then(token_got => {
+           res.redirect('http://'+url_parsed+'?action=DELETE_USER&token='+token_got);
+        }).catch(err => res.redirect('http://'+url_parsed));
+    });
+
  
+    // Endpoint utilizzato per eliminare l'account dopo aver confermato l'operazione (success: password modificata).
+    // @params token, utente (cookie)
+    app.post('/user/delete/do/', function(req, res){
+        session.check(req.cookies.actoken32).then(user_id =>{
+            token.get(req.body.token).then(token_data => {
+                token.delete(req.body.token).then(token_deleted => {
+                    user.delete_do_request(user_id, res);
+                }).catch(err => {
+                    res.send({status: 1, message: 'ERROR_TOKEN'});
+                });
+            }).catch(err => {
+                res.send({status: 1, message: 'ERROR_TOKEN'});
+            });
+        }).catch(err => {
+            res.send({status: 1, message: 'ERROR_SESSION'});
+        });
+    });
 
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
@@ -118,14 +154,14 @@ module.exports = {
             console.log('You cannot login, session already active on your browser');
             res.send({status: 1, message: 'CANNOT_LOGIN'});
         }else{
-            user.authorize(req.body).then(userId=>{
+            user.authorize(req.body).then(user_id=>{
                 var ip_client = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 var user_agent = req.headers['user-agent'] || 'Unknown';
                 console.log(ip_client+","+user_agent);
                 //http://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
-                session.create(userId, ip_client, user_agent).then(token=>{
+                session.create(user_id, ip_client, user_agent).then(token=>{
                     res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
-                    res.send({status:0, message:{user: userId}});
+                    res.send({status:0, message:{user: user_id}});
                 }).catch(err=>{
                     res.send({status:1, message: 'ERROR_GENERATING_SESSION'});
                 });
@@ -137,8 +173,8 @@ module.exports = {
     });
     
     app.get('/session/check', function(req, res){
-        session.check(req.cookies.actoken32).then(userId =>{
-            res.send({status:0, message:{user: userId}});
+        session.check(req.cookies.actoken32).then(user_id =>{
+            res.send({status:0, message:{user: user_id}});
         }).catch(err=>{
             res.send({status:1, message: err.message||err});
         });

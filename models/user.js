@@ -19,10 +19,10 @@ function validatePassword(password){
 
 
 function User() {
-    this.get = function(utente){
+    this.get = function(user_id){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
-                con.query('SELECT * FROM rete_wifi WHERE id=?', [rete_wifi], function(err, result) {
+                con.query('SELECT * FROM utente WHERE id=?', [user_id], function(err, result) {
                         if(err){
                             reject('ERROR_DB');
                         }else{
@@ -111,7 +111,6 @@ function User() {
             var url_parsed = decodeURIComponent(user.redirect_url);
             res.redirect('http://'+url_parsed);
         }).catch(message_error => {
-            console.log(message_error);
             res.send({status: 1, message: message_error});
         });
     }
@@ -158,7 +157,6 @@ function User() {
                         if(result[0].n_found > 0){
                             // Generate token
                             token.generate(user.email).then(token_generated => {
-                                console.log(user.email+","+token_generated);
                                 if(token_generated != null){
                                     // Encode frontend URL to be parsed from express into GET requests
                                     var url = encodeURIComponent(user.frontend_url);
@@ -244,37 +242,88 @@ function User() {
         });
     };
     
-    this.delete = function(){
+    this.delete_request = function(user_id, data, res){
+        connection.acquire(function(err, con) {
+            if(user.email == null || user.email.length == 0 || !validateEmail(user.email)){
+                res.send({status: 1, message: 'ERROR_EMAIL'});
+            }else{
+                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function(err, result){
+                    if(err){
+                        res.send({status: 1, message: 'ERROR_DB'});
+                    }else{
+                        if(result[0].n_found > 0){
+                            // Generate token
+                            token.generate(user.email).then(token_generated => {
+                                if(token_generated != null){
+                                    // Encode frontend URL to be parsed from express into GET requests
+                                    var url = encodeURIComponent(data.frontend_url);
+                                     
+                                    // Send mail
+                                    mailer.transporter.sendMail({
+                                        from: config.smtp_google_user,
+                                        to: user.email,
+                                        subject: user.email+', conferma l\'eliminazione del tuo account su AlwaysConnected',
+                                        text: 'Per confermare l\'eliminazione del tuo account, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/delete/token/'+token_generated+'/redirect/'+url
+                                    }, function (err, responseStatus){
+                                        mailer.transporter.close();
+                                    });
+                                        
+                                    // Send JSON to middleware informing mail is sent
+                                    res.send({status: 0, message: 'DELETE_REQUEST_OK'});
+                                }else{
+                                    res.send({status: 1, message: 'ERROR_DB'});
+                                }
+                            }).catch(err => {
+                                res.send({status: 1, message: 'ERROR_DB'});
+                            });
+                        }else{
+                            res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                        }
+                    }
+                });
+            }
+            con.release();
+        });
+    };
+    
+    this.delete_do_request = function(user_id, res){
+        this.delete(user_id).then(message_ok => {
+            res.send({status: 0, message: message_ok});
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+        });
+    }
+    
+    
+    this.delete = function(user_id){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
-                session.check(req.cookies.actoken32).then(user_id =>{
-                    con.query('DELETE FROM sessione WHERE utente = ?', [user_id], function(err, result) {
-                        if(err){
-                            reject('ERROR_DB');
-                        }
-                    });
-                    con.query('DELETE FROM segnalazione WHERE utente = ?', [user_id], function(err, result) {
-                        if(err){
-                            reject('ERROR_DB');
-                        }
-                    });
-                    con.query('DELETE FROM valuta WHERE utente = ?', [user_id], function(err, result) {
-                        if(err){
-                            reject('ERROR_DB');
-                        }
-                    });
-                    con.query('DELETE FROM rete_wifi WHERE utente = ?', [user_id], function(err, result) {
-                        if(err){
-                            reject('ERROR_DB');
-                        }
-                    });
-                    con.query('DELETE FROM utente WHERE id = ?', [user_id], function(err, result) {
-                        if(err){
-                            reject('ERROR_DB');
-                        }
-                    });
-                    resolve('DELETE_OK');
+                con.query('DELETE FROM sessione WHERE utente = ?', [user_id], function(err, result) {
+                    if(err){
+                        reject('ERROR_DB');
+                    }
                 });
+                con.query('DELETE FROM segnalazione WHERE utente = ?', [user_id], function(err, result) {
+                    if(err){
+                        reject('ERROR_DB');
+                    }
+                });
+                con.query('DELETE FROM valuta WHERE utente = ?', [user_id], function(err, result) {
+                    if(err){
+                        reject('ERROR_DB');
+                    }
+                });
+                con.query('DELETE FROM rete_wifi WHERE utente = ?', [user_id], function(err, result) {
+                    if(err){
+                        reject('ERROR_DB');
+                    }
+                });
+                con.query('DELETE FROM utente WHERE id = ?', [user_id], function(err, result) {
+                    if(err){
+                        reject('ERROR_DB');
+                    }
+                });
+                resolve('DELETE_OK');
             });
         });
     }
