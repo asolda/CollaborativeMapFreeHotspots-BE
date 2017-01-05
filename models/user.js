@@ -243,42 +243,27 @@ function User() {
     };
     
     this.delete_request = function(user_id, data, res){
-        connection.acquire(function(err, con) {
-                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE id=?', [user_id], function(err, result){
-                    if(err){
-                        res.send({status: 1, message: 'ERROR_DB'});
-                    }else{
-                        if(result[0].n_found > 0){
-                            // Generate token
-                            token.generate(user.email).then(token_generated => {
-                                if(token_generated != null){
-                                    // Encode frontend URL to be parsed from express into GET requests
-                                    var url = encodeURIComponent(data.frontend_url);
+        user.get(user_id).then(user => {
+            token.generate(user.email).then(token_generated => {
+                // Encode frontend URL to be parsed from express into GET requests
+                var url = encodeURIComponent(data.frontend_url);
                                      
-                                    // Send mail
-                                    mailer.transporter.sendMail({
-                                        from: config.smtp_google_user,
-                                        to: user.email,
-                                        subject: user.email+', conferma l\'eliminazione del tuo account su AlwaysConnected',
-                                        text: 'Per confermare l\'eliminazione del tuo account, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/delete/token/'+token_generated+'/redirect/'+url
-                                    }, function (err, responseStatus){
-                                        mailer.transporter.close();
-                                    });
-                                        
-                                    // Send JSON to middleware informing mail is sent
-                                    res.send({status: 0, message: 'DELETE_REQUEST_OK'});
-                                }else{
-                                    res.send({status: 1, message: 'ERROR_DB'});
-                                }
-                            }).catch(err => {
-                                res.send({status: 1, message: 'ERROR_DB'});
-                            });
-                        }else{
-                            res.send({status: 1, message: 'ERROR_ID_NOT_FOUND'});
-                        }
-                    }
+                // Send mail
+                mailer.transporter.sendMail({
+                    from: config.smtp_google_user,
+                    to: user.email,
+                    subject: user.email+', conferma l\'eliminazione del tuo account su AlwaysConnected',
+                    text: 'Per confermare l\'eliminazione del tuo account, clicca qui: '+config.server_ip_address_http+':'+config.server_port+'/user/delete/token/'+token_generated+'/redirect/'+url
+                }, function (err, responseStatus){
+                    mailer.transporter.close();
                 });
-            con.release();
+               
+                res.send({status: 0, message: 'DELETE_REQUEST_OK'});
+            }).catch(message_error => {
+                res.send({status: 1, message: message_error});
+            });
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
         });
     };
     

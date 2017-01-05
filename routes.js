@@ -107,7 +107,7 @@ module.exports = {
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
-        });
+        })
     });
 
     // Endpoint per richiedere l'eliminazione dell'account (success: invio mail, gen. token).
@@ -115,6 +115,8 @@ module.exports = {
     app.post('/user/delete/request', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             user.delete_request(user_id, req.body, res);
+        }).catch(err => {
+            res.send({status: 1, message: 'ERROR_SESSION'});
         });
     });
     
