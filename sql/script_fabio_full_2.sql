@@ -130,21 +130,18 @@ ALTER TABLE utente
 
 -- Vincoli relazionali
 ALTER TABLE rete_wifi
-  ADD CONSTRAINT FK_rete_wifi_UTENTE FOREIGN KEY (utente) REFERENCES utente(id); 
+  ADD CONSTRAINT FK_rete_wifi_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE; 
   
 ALTER TABLE segnalazione
-  ADD CONSTRAINT FK_segnalazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
-  ADD CONSTRAINT FK_segnalazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  ADD CONSTRAINT FK_segnalazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_segnalazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
 
 ALTER TABLE sessione
-  ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
   
 ALTER TABLE valuta
-  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
-  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
-
-
-
+  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
   
   
   

@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS rete_wifi;
 CREATE TABLE rete_wifi (
   id int(11) NOT NULL,
   ssid varchar(30) NOT NULL,
-  qualit� float NOT NULL,
+  qualità float NOT NULL,
   latitudine double NOT NULL,
   longitudine double NOT NULL,
   numero_recensioni int(11) DEFAULT '0',
-  necessit�_login tinyint(1) DEFAULT '0',
+  necessità_login tinyint(1) DEFAULT '0',
   restrizioni text,
   altre_informazioni text,
   range_wifi int(11) NOT NULL DEFAULT '0',
@@ -129,15 +129,15 @@ ALTER TABLE utente
 
 -- Vincoli relazionali
 ALTER TABLE rete_wifi
-  ADD CONSTRAINT FK_rete_wifi_UTENTE FOREIGN KEY (utente) REFERENCES utente(id); 
+  ADD CONSTRAINT FK_rete_wifi_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE; 
   
 ALTER TABLE segnalazione
-  ADD CONSTRAINT FK_segnalazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
-  ADD CONSTRAINT FK_segnalazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  ADD CONSTRAINT FK_segnalazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_segnalazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
 
 ALTER TABLE sessione
-  ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
   
 ALTER TABLE valuta
-  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id),
-  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id);
+  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
