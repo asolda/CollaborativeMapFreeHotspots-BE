@@ -14,7 +14,7 @@ USE gopher_main;
 DROP TABLE IF EXISTS utente;
 CREATE TABLE utente (
   id int(11) NOT NULL,
-  email varchar(30) NOT NULL,
+  email varchar(30)UNIQUE NOT NULL,
   password varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -97,9 +97,6 @@ ALTER TABLE sessione
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
   
--- Attributo unico email
-ALTER TABLE 'utente'
-ADD UNIQUE ('email')
   
 -- Chiavi primarie per valuta + chiavi esterne
 ALTER TABLE valuta
@@ -150,7 +147,7 @@ ALTER TABLE valuta
 INSERT INTO utente (id, email, password) VALUES
 (1, 'asolda92@gmail.com', '74583a72809d2c308518ceaa966047d97c261f54'),
 (2, 'finalgalaxy@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
-(3, 'cesaretucci95@gmail.com', '5fb0076337e0df3de0e7162d3bcf9788e3b9758d'),
+(3, 'cesaretucci95@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
 (4, 'gianluca17@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
 (5, 'james1@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
 (6, 'rubinho@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),

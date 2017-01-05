@@ -14,7 +14,7 @@ USE gopher_main;
 DROP TABLE IF EXISTS utente;
 CREATE TABLE utente (
   id int(11) NOT NULL,
-  email varchar(30) NOT NULL,
+  email varchar(30) UNIQUE NOT NULL,
   password varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -96,10 +96,7 @@ ALTER TABLE sessione
 -- Chiave primaria per la tabella utente
 ALTER TABLE utente
   ADD PRIMARY KEY (id);
--- Attributo unico email
-ALTER TABLE utente
-ADD UNIQUE (email)
-  
+
 -- Chiavi primarie per valuta + chiavi esterne
 ALTER TABLE valuta
   ADD PRIMARY KEY (utente,rete_wifi),
