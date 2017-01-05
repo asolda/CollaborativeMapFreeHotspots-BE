@@ -244,10 +244,7 @@ function User() {
     
     this.delete_request = function(user_id, data, res){
         connection.acquire(function(err, con) {
-            if(user.email == null || user.email.length == 0 || !validateEmail(user.email)){
-                res.send({status: 1, message: 'ERROR_EMAIL'});
-            }else{
-                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function(err, result){
+                con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user_id], function(err, result){
                     if(err){
                         res.send({status: 1, message: 'ERROR_DB'});
                     }else{
@@ -277,11 +274,10 @@ function User() {
                                 res.send({status: 1, message: 'ERROR_DB'});
                             });
                         }else{
-                            res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND'});
+                            res.send({status: 1, message: 'ERROR_ID_NOT_FOUND'});
                         }
                     }
                 });
-            }
             con.release();
         });
     };
