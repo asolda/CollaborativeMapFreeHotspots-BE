@@ -26,30 +26,12 @@ function User() {
                         if(err){
                             reject('ERROR_DB');
                         }else{
-                            resolve(result);
+                            if(result.length > 0) resolve(result[0]);
+                            else                  reject('ERROR_NOT_FOUND');
                         }
                         con.release();
                     }
                 );
-            });
-        });
-    }
-    this.getid = function(email){
-        return new Promise((resolve, reject) => {
-            connection.acquire(function(err, con){
-                con.query('SELECT id FROM utente WHERE email=?', [email], function(err, result) {
-                        if(err){
-                        reject(err);
-                    }else if(result.length > 0){
-                        if(result[0].id==undefined||result[0].id==null||result[0].id==''){
-                            reject('ERROR_USER_NOT_FOUND');
-                        }else{
-                            resolve(result[0].id);      
-                        }
-                    }else{
-                        reject('ERROR_USER_NOT_FOUND');
-                    }
-                });
             });
         });
     }
@@ -241,6 +223,41 @@ function User() {
         });
         });
     };
+    
+    this.delete = function(){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                session.check(req.cookies.actoken32).then(user_id =>{
+                    con.query('DELETE FROM sessione WHERE utente = ?', [user_id], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }
+                    });
+                    con.query('DELETE FROM segnalazione WHERE utente = ?', [user_id], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }
+                    });
+                    con.query('DELETE FROM valuta WHERE utente = ?', [user_id], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }
+                    });
+                    con.query('DELETE FROM rete_wifi WHERE utente = ?', [user_id], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }
+                    });
+                    con.query('DELETE FROM utente WHERE id = ?', [user_id], function(err, result) {
+                        if(err){
+                            reject('ERROR_DB');
+                        }
+                    });
+                    resolve('DELETE_OK');
+                });
+            });
+        });
+    }
         
     
     
