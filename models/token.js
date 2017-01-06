@@ -40,7 +40,7 @@ function Token(){
                         if(result[0].n_found > 0){
                             resolve(token);
                         }else{
-                            reject(err);
+                            reject('ERROR_TOKEN');
                         }
                     }
                 });

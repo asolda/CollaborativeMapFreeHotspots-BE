@@ -157,21 +157,21 @@ module.exports = {
         var session_cookie=req.cookies.actoken32;
         session.check(session_cookie).then(utente =>{
             res.send({status: 1, message: 'CANNOT_LOGIN'});
-            }).catch(error =>{
-                if(session_cookie!=undefined||session_cookie!=null) res.clearCookie('actoken32');
-                user.authorize(req.body).then(user_id => {
-                var ip_client = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                var user_agent = req.headers['user-agent'] || 'Unknown';
-                session.create(user_id, ip_client, user_agent).then(token=>{
-                    res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
-                    res.send({status: 0, message: {user: user_id}});
-                }).catch(err=>{
-                    res.send({status: 1, message: 'ERROR_GENERATING_SESSION'});
-                });
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
-                });
-            });           
+        }).catch(error =>{
+            if(session_cookie!=undefined||session_cookie!=null) res.clearCookie('actoken32');
+            user.authorize(req.body).then(user_id => {
+            var ip_client = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            var user_agent = req.headers['user-agent'] || 'Unknown';
+            session.create(user_id, ip_client, user_agent).then(token=>{
+                res.cookie('actoken32', token, { maxAge: 900000, httpOnly: true }); //maxage dovrebbe essere infinito, per ora settato a 900000
+                res.send({status: 0, message: {user: user_id}});
+            }).catch(err=>{
+                res.send({status: 1, message: 'ERROR_GENERATING_SESSION'});
+            });
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
+            });
+        });           
     });
     
     app.get('/session/check', function(req, res){
