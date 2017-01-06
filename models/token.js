@@ -56,7 +56,11 @@ function Token(){
                     if(err){
                         reject(err);
                     }else{
-                        resolve(result[0]);
+                        if(result.length > 0){
+                            resolve(result[0]);
+                        }else{
+                            reject('ERROR_TOKEN');
+                        }
                     }
                 });
             });
