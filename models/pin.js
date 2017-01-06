@@ -140,7 +140,7 @@ function Pin(){
         });
     }
     
-    this.rank = function(data){
+    this.rank = function(utente, data){
         return new Promise((resolve, reject) => {
             if(isNaN(data.voto) || data.voto <= 0 || data.voto > 5){
                 reject('ERROR_RANKING');
@@ -150,13 +150,13 @@ function Pin(){
                         if(err){
                             reject('ERROR_DB');
                         }else if(result.length > 0){
-                            if(result[0].utente != data.utente){
-                                con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [data.utente, data.rete_wifi, data.voto], function(err, result) {
+                            if(result[0].utente != utente){
+                                con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [utente, data.rete_wifi, data.voto], function(err, result) {
                                     if(err){
                                         reject('ERROR_DB');
                                     }else{
                                         /* Details about this query:
-                                        
+                                            (TODO Delete with triggers)
                                            The owner of the network gives his own ranking to the network (qualità=x, numero_recensioni=0);
                                            when user ranks the network, qualità is calculated like that because numero_recensioni+1(owner rank)+1(new rank).
                                         */
@@ -183,14 +183,14 @@ function Pin(){
         });
     }
     
-    this.delete = function(data, res){
+    this.delete = function(utente, data){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
                     con.query('SELECT utente FROM rete_wifi WHERE id = ?', [data.rete_wifi], function(err, result) {
                         if(err){
                             reject('ERROR_DB');
                         }else if(result.length > 0){
-                            if(result[0].utente == data.utente){
+                            if(result[0].utente == utente){
                                 con.query('DELETE FROM segnalazione WHERE rete_wifi = ?', [data.rete_wifi], function(err, result) {
                                     if(err){
                                         reject('ERROR_DB');

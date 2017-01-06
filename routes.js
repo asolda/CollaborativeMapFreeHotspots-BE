@@ -99,24 +99,28 @@ module.exports = {
     });
     
     // Endpoint utilizzato per modificare la password, in caso in cui si è loggati (modifica), dopo aver confermato l'operazione (success: password modificata).
-    // @params utente (da cambiare in sessione), password
+    // @params password, utente (tramite la sessione)
     app.post('/user/change_password/', function(req, res){
-        user.get(req.body.utente).then(data => {
-            user.set_password(data.email, req.body.password).then(message_ok => {
-                res.send({status: 0, message: message_ok});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
-            });
-        })
+        session.check(req.cookies.actoken32).then(user_id =>{
+            user.get(user_id).then(data => {
+                user.set_password(data.email, req.body.password).then(message_ok => {
+                    res.send({status: 0, message: message_ok});
+                }).catch(message_error => {
+                    res.send({status: 1, message: message_error});
+                });
+            })
+        }).catch(err => {
+            res.send({status: 1, message: 'ERROR_SESSION'});
+        });
     });
 
     // Endpoint per richiedere l'eliminazione dell'account (success: invio mail, gen. token).
-    // @params frontend_url, utente (cookie)
+    // @params frontend_url, utente (tramite la sessione)
     app.post('/user/delete/request', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             user.delete_request(user_id, req.body, res);
         }).catch(err => {
-            res.send({status: 1, message: 'ERROR_SESSION'+err.message});
+            res.send({status: 1, message: 'ERROR_SESSION'});
         });
     });
     
@@ -200,13 +204,17 @@ module.exports = {
 	});
     
     // Endpoint per gestione reti WiFi (success: lista di reti WiFi create dall'utente (da cambiare in sessione).
-    // @params utente
+    // @params utente (tramite la sessione)
     app.get('/pin/get_user_networks/:utente/', function(req, res){
-        pin.getuserpins(req, res);
+        session.check(req.cookies.actoken32).then(user_id=> {
+            pin.getuserpins(req, res);
+        }).catch(message_err=>{
+            res.send({status:1, message_err});
+        });  
     });
     
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
-    // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range (ed utente tramite la sessione)
+    // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, utente (tramite la sessione)
     app.post('/pin/new', function(req, res){
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.insert(user_id, req.body).then(message_ok => {
@@ -220,7 +228,7 @@ module.exports = {
     });
     
     // Endpoint per modificare un pin esistente.
-    // @params rete_wifi, range, restrizioni, altre_informazioni, [utente (da cambiare in sessione)]
+    // @params rete_wifi, range, restrizioni, altre_informazioni, utente (tramite la sessione)
     app.post('/pin/edit', function(req, res){
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.edit(user_id, req.body).then(message_ok => {
@@ -228,27 +236,37 @@ module.exports = {
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
-        });
+        }).catch(message_err=>{
+            res.send({status:1, message_err});
+        }); 
     });
     
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
     // @params rete_wifi, voto, [utente (da cambiare in sessione)]
     app.post('/pin/rank', function(req, res){
-        pin.rank(req.body).then(message_ok => {
-            res.send({status: 0, message: message_ok});
-        }).catch(message_error => {
-            res.send({status: 1, message: message_error});
-        });
+        session.check(req.cookies.actoken32).then(user_id=> {
+            pin.rank(user_id, req.body).then(message_ok => {
+                res.send({status: 0, message: message_ok});
+            }).catch(message_error => {
+                res.send({status: 1, message: message_error});
+            });
+        }).catch(message_err=>{
+            res.send({status:1, message_err});
+        }); 
     });
     
     // Endpoint per cancellare un pin esistente.
     // @params rete_wifi, [utente (da cambiare in sessione)]
     app.post('/pin/delete', function(req, res){
-        pin.delete(req.body).then(message_ok => {
-            res.send({status: 0, message: message_ok});
-        }).catch(message_error => {
-            res.send({status: 1, message: message_error});
-        });
+        session.check(req.cookies.actoken32).then(user_id=> {
+            pin.delete(user_id, req.body).then(message_ok => {
+                res.send({status: 0, message: message_ok});
+            }).catch(message_error => {
+                res.send({status: 1, message: message_error});
+            });
+        }).catch(message_err=>{
+            res.send({status:1, message_err});
+        }); 
     });
   }
 };
