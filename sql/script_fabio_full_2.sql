@@ -145,15 +145,15 @@ ALTER TABLE valuta
   
 -- Query di popolazione
 INSERT INTO utente (id, email, password) VALUES
-(1, 'asolda92@gmail.com', '74583a72809d2c308518ceaa966047d97c261f54'),
+(1, 'asolda92@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
 (2, 'finalgalaxy@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
 (3, 'cesaretucci95@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
-(4, 'gianluca17@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
-(5, 'james1@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
-(6, 'rubinho@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
-(7, 'vayumees@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
-(8, 'mathewalter2@gmail.com', '4188736a00fbfb506aca06281acf338290455c21'),
-(9, 'amhad10@gmail.com', '4188736a00fbfb506aca06281acf338290455c21');
+(4, 'gianluca17@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
+(5, 'james1@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
+(6, 'rubinho@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
+(7, 'vayumees@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
+(8, 'mathewalter2@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3'),
+(9, 'amhad10@gmail.com', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3');
 
 INSERT INTO rete_wifi (id, ssid, qualità, latitudine, longitudine, numero_recensioni, necessità_login, restrizioni, altre_informazioni, range_wifi, numero_segnalazioni, utente) VALUES
 (1, 'tp-link', 4, 40.775132, 14.789021, 0, 0, 'Range di indirizzi IP limitato.\r\nBanda up/down inferiore alla media dei piani ADSL comuni.', 'Velocità media download: 1Mbit/s\r\nVelocit� media upload: 10Kb/s', 50, 0, 2),
