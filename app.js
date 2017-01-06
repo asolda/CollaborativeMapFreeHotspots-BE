@@ -20,9 +20,10 @@ app.use(cookieparser());
 
 // Server cross-domain details for setting possible accesses
 var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*'); // Allow cross-domain control access only to the server itself
+  res.header('Access-Control-Allow-Origin', config.control_allow_origin_urls); // Allow cross-domain control access only to the server itself
+  res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'); // Allow those operations
-  res.header('Access-Control-Allow-Headers', 'Content-Type');		 // Headers allowed
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');		 // Headers allowed
   next();
 }
  

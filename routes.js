@@ -175,6 +175,7 @@ module.exports = {
     });
     
     app.get('/session/check', function(req, res){
+        console.log("cookie contains: "+JSON.stringify(req.cookies.actoken32));
         session.check(req.cookies.actoken32).then(user_id =>{
             res.send({status:0, message:{user: user_id}});
         }).catch(err=>{

@@ -1,5 +1,6 @@
 // Require mysql library for database connection
 var mysql = require('mysql');
+var config = require('./config');
 
 // Connection function for DB interaction
 function Connection() {
@@ -9,10 +10,10 @@ function Connection() {
   this.init = function() {
     this.pool = mysql.createPool({
       connectionLimit: 10,
-      host: '127.0.0.1',
-	  port: '3306',
-      user: 'root',
-      password: 'admin',
+      host: config.mysql_host,
+	  port: config.mysql_port,
+      user: config.mysql_user,
+      password: config.mysql_pass,
       database: 'gopher_main'
     });
   };
@@ -23,10 +24,10 @@ function Connection() {
     }
     this.pool = mysql.createPool({
       connectionLimit: 10,
-      host: '127.0.0.1',
-	  port: '3306',
-      user: 'root',
-      password: 'admin',
+      host: config.mysql_host,
+	  port: config.mysql_port,
+      user: config.mysql_user,
+      password: config.mysql_pass,
       database: 'gopher_'+new_db
     });
   };
