@@ -192,7 +192,7 @@ module.exports = {
     app.get('/pin/getPinInfo/:pin_id', function(req, res){
         pin.get(req.params.pin_id).then(result => {
             res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(result));
+            res.send({status: 0, message: result});
         }).catch(message_error => {
             res.send({status: 1, message: message_error});
         })
