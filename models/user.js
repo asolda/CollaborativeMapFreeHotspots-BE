@@ -287,7 +287,6 @@ function User() {
 
     this.delete = function (user_id) {
         return new Promise((resolve, reject) => {
-            console.log(user_id);
             connection.acquire(function (err, con) {
                 con.query('DELETE FROM sessione WHERE utente = ?', [user_id], function (err, result) {
 

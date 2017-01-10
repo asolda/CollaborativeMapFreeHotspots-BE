@@ -11,13 +11,13 @@ let user = require("../models/user");
 var expect = chai.expect;
 chai.use(chaiHttp);
 //Our parent block
-describe('User', () => {
-    let userjson = { 'email': 'Test1@gmail.com', 'password': 'Cico1996' };
+describe('Create-User', () => {
+    let userjson = { 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' };
     /*
       * Testa la funzione di creazione richiesta utente
       */
     describe('Crea utente', () => {
-        it('Crea la richiesta per l\'utente Test1@gmail.com', function (done) {
+        it('Crea la richiesta per l\'utente testgophercmfh@gmail.com', function (done) {
 
             chai.request(server)
                 .post('/user/new/request')
@@ -33,7 +33,7 @@ describe('User', () => {
           /*
       * Testa la funzione di creazione utente
       */
-        describe('Aggiunta di Test1@gmail.com al database.', (done) => {
+        describe('Aggiunta di testgophercmfh@gmail.com al database.', (done) => {
             it('testa la creazione vera e propria di un utente', function (done) {
                 user.create(userjson)
                 .then(message_ok =>{

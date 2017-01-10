@@ -4,7 +4,7 @@
   "description": "Node backend for the project alwaysconnected (PM: asolda).",
   "main": "app.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec --timeout 5000"
+    "test": "./node_modules/.bin/mocha --reporter spec --timeout 5000 -S --sort"
   },
   "repository": {
     "type": "git",

@@ -20,14 +20,14 @@ describe('Session', () => {
     describe('Crea la sessione', () => {
         describe('restituisce il cookie di sessione', () => {
             it('Crea una sessione', function (done) {
-                user.getid('Test1@gmail.com')
+                user.getid('testgophercmfh@gmail.com')
                 .then(result =>{
                 id=result;
                             });
                 
                 chai.request(server)
                     .post('/user/login')
-                    .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
+                    .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
                     .end((err, res) => {
 
                         expect(res.body).to.have.property('status', 0);
