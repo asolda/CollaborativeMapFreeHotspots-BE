@@ -67,6 +67,25 @@ function Token(){
         });
     }
     
+    this.get_token_from_email = function(email){
+        return new Promise((resolve, reject) => {
+            connection.acquire(function(err, con){
+                con.query('SELECT token FROM token WHERE email = ?', [email], function(err, result){
+                    con.release();
+                    if(err){
+                        reject(err);
+                    }else{
+                        if(result.length > 0){
+                            resolve(result[0]);
+                        }else{
+                            reject('ERROR_TOKEN_NOT_FOUND');
+                        }
+                    }
+                });
+            });
+        });
+    }
+    
     this.delete = function(token){
         return new Promise((resolve, reject) => {
             connection.acquire(function(err, con){
