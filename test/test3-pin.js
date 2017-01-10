@@ -121,7 +121,11 @@ describe('Pins', () => {
         });
 
     });
-    describe('Valuta la rete di testing', () => {
+    var rand= function randomInt (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+}
+var rand_value=rand(1,6) ;
+    describe('Valuta la rete di testing con valore randomico: '+rand_value, () => {
 
         it('valuta la rete \'retetest\'', function (done) {
 
@@ -130,7 +134,7 @@ describe('Pins', () => {
             agent
 
                 .post('/pin/rank')
-                .send({ 'rete_wifi':1, voto: 2 })
+                .send({ 'rete_wifi':1, voto:rand_value })
                 .then((res) => {
 
                     expect(res.body).to.have.property('status', 0);
