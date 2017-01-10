@@ -44,7 +44,8 @@ describe('Pins', () => {
                     .post('/user/login')
                     .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
                     .then((res) => {
-                        expect(res).to.have.cookie('actoken32')
+                        expect(res).to.have.cookie('actoken32');
+                   
                      return agent
 
                             .post('/pin/new')
