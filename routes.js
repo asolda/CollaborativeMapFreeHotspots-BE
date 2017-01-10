@@ -34,7 +34,7 @@ module.exports = {
         });
         res.send({status: 0});
     });
-    
+    //testato
     // Verifica dell'esistenza del token nel DB (usato dagli scripts di preload in caso di ?token=TOKEN_VALUE).
     app.get('/token/:token/', function(req, res){
         token.check(req.params.token).then(token_gen => {
@@ -46,7 +46,7 @@ module.exports = {
 	
     
     
-    
+    //testato
     // Endpoint per richiedere l'inserimento di un nuovo utente (success: invio mail, gen. token).
     // @params email, password, frontend_url
     app.post('/user/new/request', function(req, res) {
@@ -67,7 +67,7 @@ module.exports = {
         });
     });
     
-    
+    //testato
     // Endpoint per richiedere il recupero della propria password (success: invio mail, gen. token).
     // @params email, frontend_url
     app.post('/user/reset_password/request', function(req, res){
@@ -83,7 +83,7 @@ module.exports = {
            res.redirect('http://'+url_parsed+'?action=RESET_PASSWORDtoken='+token_got);
         }).catch(err => res.redirect('http://'+url_parsed));
     });
- 
+    //testato
     // Endpoint utilizzato per modificare la password, in caso in cui NON si è loggati (recupero), dopo aver confermato l'operazione (success: password modificata).
     // @params token, password
     app.post('/user/reset_password/do/', function(req, res){
@@ -97,7 +97,7 @@ module.exports = {
             res.send({status: 1, message: 'ERROR_TOKEN'});
         });
     });
-    
+    //testato
     // Endpoint utilizzato per modificare la password, in caso in cui si è loggati (modifica), dopo aver confermato l'operazione (success: password modificata).
     // @params password, utente (tramite la sessione)
     app.post('/user/change_password/', function(req, res){
@@ -113,7 +113,7 @@ module.exports = {
             res.send({status: 1, message: 'ERROR_SESSION'});
         });
     });
-
+    //testato
     // Endpoint per richiedere l'eliminazione dell'account (success: invio mail, gen. token).
     // @params frontend_url, utente (tramite la sessione)
     app.post('/user/delete/request', function(req, res){
@@ -134,7 +134,7 @@ module.exports = {
         }).catch(err => res.redirect('http://'+url_parsed));
     });
 
- 
+    //testato
     // Endpoint utilizzato per eliminare l'account dopo aver confermato l'operazione (success: password modificata).
     // @params token, utente (cookie)
     app.post('/user/delete/do/', function(req, res){
@@ -152,7 +152,7 @@ module.exports = {
             res.send({status: 1, message: 'ERROR_SESSION'});
         });
     });
-
+    //testato
     app.post('/user/login', function(req,res){
         var session_cookie=req.cookies.actoken32;
         session.check(session_cookie).then(utente =>{
@@ -173,7 +173,7 @@ module.exports = {
             });
         });           
     });
-    
+    //testato
     app.post('/user/logout', function(req,res){
         var session_cookie=req.cookies.actoken32;
         session.check(session_cookie).then(utente =>{
@@ -187,7 +187,7 @@ module.exports = {
             res.send({status: 1, message: message_error});
         });
     });
-    
+    //testato
     app.get('/session/check', function(req, res){
         console.log("cookie contains: "+JSON.stringify(req.cookies.actoken32));
         session.check(req.cookies.actoken32).then(user_id =>{
@@ -200,7 +200,7 @@ module.exports = {
     app.post('/segnala/', function(req, res){
         segnala.report(req, res);
     });
-    
+    //testato
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
     // @params id
     app.get('/pin/getPinInfo/:pin_id', function(req, res){
@@ -211,13 +211,13 @@ module.exports = {
             res.send({status: 1, message: message_error});
         })
     });
-    
+    //testato
     // Endpoint per visualizza mappa (success: lista di reti WiFi con le informazioni utili per la mappa in JSON).
     // @params latitudine, longitudine, radius_lat, radius_long
     app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
-    
+    //testato
     // Endpoint per gestione reti WiFi (success: lista di reti WiFi create dall'utente (da cambiare in sessione).
     // @params utente (tramite la sessione)
     app.get('/pin/get_user_networks/:utente/', function(req, res){
@@ -227,7 +227,7 @@ module.exports = {
             res.send({status:1, message_err});
         });  
     });
-    
+    //testato
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
     // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, utente (tramite la sessione)
     app.post('/pin/new', function(req, res){
@@ -241,7 +241,7 @@ module.exports = {
             res.send({status:1, message_err});
         });           
     });
-    
+    //testato
     // Endpoint per modificare un pin esistente.
     // @params rete_wifi, range, restrizioni, altre_informazioni, utente (tramite la sessione)
     app.post('/pin/edit', function(req, res){
@@ -255,7 +255,7 @@ module.exports = {
             res.send({status:1, message_err});
         }); 
     });
-    
+    //testato
     // Endpoint per valutare un pin esistente di cui NON si è proprietari.
     // @params rete_wifi, voto, [utente (da cambiare in sessione)]
     app.post('/pin/rank', function(req, res){
@@ -269,7 +269,7 @@ module.exports = {
             res.send({status:1, message_err});
         }); 
     });
-    
+    //testato
     // Endpoint per cancellare un pin esistente.
     // @params rete_wifi, [utente (da cambiare in sessione)]
     app.post('/pin/delete', function(req, res){
