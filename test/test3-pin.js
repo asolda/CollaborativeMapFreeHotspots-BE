@@ -35,14 +35,14 @@ describe('Pins', () => {
          * Testa la funzione di inserimento pin usando l'agent per mantenere la sessione
          */
     describe('Inserimento rete', () => {
-        describe('Test con rete: { \'ssid\': \'Test1\', \'qualità\': 3, \'latitudine\': 1, \'longitudine\': 2, \'necessità_login\': 0, \'restrizioni\': \'Nessuna\', \'altre_informazioni\': \'PASS:Ciao\', \'range\': 20, \'utente\': 1 }', () => {
+        describe('Test con rete: { \'ssid\': \'Test1\', \'qualità\': 3, \'latitudine\': 1, \'longitudine\': 2, \'necessità_login\': 0, \'restrizioni\': \'Nessuna\', \'altre_informazioni\': \'PASS:Ciao\', \'range\': 20, \'utente\': userid}', () => {
             it('Dovrebbe inserire il PIN', function (done) {
                 var agent = chai.request.agent(server);
-                let email='Test1@gmail.com';
+                let email='testgophercmfh@gmail.com';
                 let id ;
                 agent
                     .post('/user/login')
-                    .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
+                    .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
                     .then((res) => {
                         expect(res).to.have.cookie('actoken32');
                    
