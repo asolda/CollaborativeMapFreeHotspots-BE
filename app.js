@@ -30,6 +30,8 @@ var allowCrossDomain = function(req, res, next) {
 // Use cross domain config function inside the app
 app.use(allowCrossDomain);
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 connection.init(); // Init DB
 routes.configure(app); // Give express to configure option for end-points configuration
 
