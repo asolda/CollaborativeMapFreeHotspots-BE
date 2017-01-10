@@ -30,16 +30,17 @@ describe('Create-User', () => {
                     done();
                 });
         });
-          /*
-      * Testa la funzione di creazione utente
-      */
-        describe('Aggiunta di testgophercmfh@gmail.com al database.', (done) => {
-            it('testa la creazione vera e propria di un utente', function (done) {
-                user.create(userjson)
-                .then(message_ok =>{
+    });
+    /*
+* Testa la funzione di creazione utente
+*/
+    describe('Aggiunta di testgophercmfh@gmail.com al database.', (done) => {
+        it('testa la creazione vera e propria di un utente', function (done) {
+            user.create(userjson)
+                .then(message_ok => {
                     done();
+
                 });
-            });
         });
 
     });
