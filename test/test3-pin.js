@@ -8,11 +8,11 @@ let server = require("../app");
 let should = chai.should();
 connection.switch_db("test1");
 var expect = chai.expect;
-
+var id;
 chai.use(chaiHttp);
 //Our parent block
 describe('Pins', () => {
-
+    var agent = chai.request.agent(server);
     /*
       * Testa la funzione di ricerca pin vicini
       */
@@ -37,13 +37,15 @@ describe('Pins', () => {
     describe('Inserimento rete', () => {
 
         it('Dovrebbe inserire il PIN', function (done) {
-            var agent = chai.request.agent(server);
+
             let email = 'testgophercmfh@gmail.com';
-            let id;
+
             agent
                 .post('/user/login')
                 .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
                 .then((res) => {
+                    id = res.body.message.user;
+
                     expect(res).to.have.cookie('actoken32');
 
                     return agent
@@ -60,4 +62,102 @@ describe('Pins', () => {
 
         });
     });
+    var rete_id;
+    describe('GET lista pin utente', () => {
+
+        it('Restituisce la lista delle reti utente', function (done) {
+
+            agent
+
+                .get('/pin/get_user_networks/' + id + '/')
+
+                .then((res) => {
+
+                    expect(res).to.have.status(200);
+                    expect(res).to.be.json;
+                    expect(res.body).to.be.a('array');
+                    expect(res.body[0]).to.have.property('ssid', 'Test1');
+                    rete_id=res.body[0].id;
+                    done();
+                });
+        });
+
+    });
+    describe('Update range rete', () => {
+
+        it('Aggiornamento del PIN', function (done) {
+
+
+
+            agent
+
+                .post('/pin/edit')
+                .send({ 'range': 30, 'rete_wifi':rete_id })
+                .then((res) => {
+
+                    expect(res.body).to.have.property('status', 0);
+                    expect(res.body).to.have.property('message', 'EDIT_OK');
+                    done();
+                });
+        });
+
+    });
+    describe('Elimina rete', () => {
+
+        it('Elimina il PIN', function (done) {
+
+
+
+            agent
+
+                .post('/pin/delete')
+                .send({ 'rete_wifi':rete_id })
+                .then((res) => {
+
+                    expect(res.body).to.have.property('status', 0);
+                    expect(res.body).to.have.property('message', 'DELETE_OK');
+                    done();
+                });
+        });
+
+    });
+    describe('Valuta la rete di testing', () => {
+
+        it('valuta la rete \'retetest\'', function (done) {
+
+
+
+            agent
+
+                .post('/pin/rank')
+                .send({ 'rete_wifi':1, voto: 2 })
+                .then((res) => {
+
+                    expect(res.body).to.have.property('status', 0);
+                    expect(res.body).to.have.property('message', 'RANKING_OK');
+                    done();
+                });
+        });
+
+    });
+    describe('Richiedi dettagli rete di testing', () => {
+
+        it('Riceve dettagli della rete \'retetest\'', function (done) {
+
+
+
+             chai.request(server)
+
+                .get('/pin/getPinInfo/1')
+                
+                .then((res) => {
+                    expect(res.body).to.have.property('status', 0);
+                    expect(res.body.message[0]).to.have.property('ssid', 'retetest');
+                    done();
+                });
+        });
+
+    });
 });
+
+
