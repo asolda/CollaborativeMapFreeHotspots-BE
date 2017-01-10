@@ -234,11 +234,15 @@ function User() {
                         if(err2){
                             reject(err2.message);
                         }else{
-                            if(result[0].password==null||result[0].password==""||result[0]==undefined){
-                                reject(err2.message);
-                            }else if(result[0].password==hash_psw){
-                                resolve(result[0].id);
-                            }else reject('ERROR_CREDENTIALS');
+                            if(result.length > 0){
+                                if(result[0].password==null||result[0].password==""||result[0]==undefined){
+                                    reject(err2.message);
+                                }else if(result[0].password==hash_psw){
+                                    resolve(result[0].id);
+                                }else reject('ERROR_CREDENTIALS');
+                            }else{
+                                reject('ERROR_CREDENTIALS');
+                            }
                         }
                     });
                     con.release();
