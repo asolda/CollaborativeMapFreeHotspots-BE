@@ -24,22 +24,25 @@ describe('User', () => {
 before(function() {
     // runs before all tests in this block
  
-            token.generate("Test1@gmail.com")
-                .then(token => {
-                    tokens = token;
-                });
+          
                  });
-            console.log(tokens);
+            
             agent
                 .post('/user/login')
                 .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
                 .then((res) => {
                     expect(res).to.have.cookie('actoken32');
                     
-                  /*  return
+                  return
                     agent.post('/user/delete/request')
                         .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
-                        .then((res) => {*/
+                        .then((res) => {
+                            token.get_token_from_email('Test1@gmail.com')
+                            .then(result => {
+                                tokens=result;
+                                console.log(tokens);
+                            }); 
+                        
                             return
 
                             agent.post('/user/delete/do')
@@ -53,7 +56,7 @@ before(function() {
 
                                 console.log(err);
 
-                        //        });
+                           });
                         });
                 });
         });
