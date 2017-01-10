@@ -7,7 +7,7 @@ let chaiHttp = require('chai-http');
 let server = require("../app");
 let should = chai.should();
 connection.switch_db("test1");
-let user = require("../models/user");
+
 var expect = chai.expect;
 let token = require("../models/token");
 chai.use(chaiHttp);
@@ -18,71 +18,63 @@ describe('User', () => {
     /*
       * Testa la funzione di creazione richiesta utente
       */
+      var tokens;
     describe('Elimina L\' utente', () => {
         it('Crea la richiesta per eliminare l\'utente Test1@gmail.com', function (done) {
-            var tokens;
-before(function() {
-    // runs before all tests in this block
- 
-          
-                 });
             
+
             agent
                 .post('/user/login')
                 .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
                 .then((res) => {
                     expect(res).to.have.cookie('actoken32');
-                    
-                  return
+
+                   
                     agent.post('/user/delete/request')
-                        .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
+                        .send()
                         .then((res) => {
-                            token.get_token_from_email('Test1@gmail.com')
-                            .then(result => {
-                                tokens=result;
-                                console.log(tokens);
-                            }); 
-                        
-                            return
+                             expect(res.body).to.have.property('status', 0);
+                                    expect(res.body).to.have.property('message', 'DELETE_REQUEST_OK');
+                                    done();
+                        });
+                });
+        });
+    });
+
+
+    // Testa la funzione di creazione utente
+
+    describe('Elimina l\'utente Test1@gmail.com.', (done) => {
+        it('testa l\'eliminazione vera e propria di un utente', function (done) {
+
+            agent
+                .post('/user/login')
+                .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
+                .then((res) => {
+                    expect(res).to.have.cookie('actoken32');
+
+
+
+                    token.get_token_from_email('Test1@gmail.com')
+                        .then(result => {
+                            tokens = result.token;
+
+
+
 
                             agent.post('/user/delete/do')
-                                .send(tokens)
-                   
+                                .send({ 'token': tokens })
+
                                 .then((res) => {
+                                    console.log(tokens);
                                     expect(res.body).to.have.property('status', 0);
-                                    expect(res.body).to.have.property('message', message_ok);
+                                    expect(res.body).to.have.property('message', 'DELETE_OK');
                                     done();
-                                }).catch(err =>{
-
-                                console.log(err);
-
-                           });
+                                });
                         });
                 });
         });
     });
 });
-    /*
-* Testa la funzione di creazione utente
- 
-    describe('Elimina l\'utente Test1@gmail.com.', (done) => {
-        it('testa la creazione vera e propria di un utente', function (done) {
-            agent
-                .post('/user/delete/request')
-                .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
-                .then((res) => {
-                    
-                    return agent
 
-                        .post('/user/delete/request')
-                        .then((res) => {
 
-                            expect(res.body).to.have.property('status', 0);
-                            expect(res.body).to.have.property('message', 'DELETE_REQUEST_OK');
-                            done();
-                        });
-                });
-        });
-    });
-
- */
