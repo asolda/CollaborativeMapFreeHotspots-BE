@@ -47,21 +47,11 @@ describe('User', () => {
     describe('Elimina l\'utente Test1@gmail.com.', (done) => {
         it('testa l\'eliminazione vera e propria di un utente', function (done) {
 
-            agent
-                .post('/user/login')
-                .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
-                .then((res) => {
-                    expect(res).to.have.cookie('actoken32');
-
-
-
+            
+                
                     token.get_token_from_email('Test1@gmail.com')
                         .then(result => {
                             tokens = result.token;
-
-
-
-
                             agent.post('/user/delete/do')
                                 .send({ 'token': tokens })
 
@@ -75,6 +65,6 @@ describe('User', () => {
                 });
         });
     });
-});
+
 
 
