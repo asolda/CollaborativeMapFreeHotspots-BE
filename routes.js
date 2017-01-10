@@ -178,10 +178,13 @@ module.exports = {
         var session_cookie=req.cookies.actoken32;
         session.check(session_cookie).then(utente =>{
             session.drop(session_cookie).then(id => {
+                res.clearCookie('actoken32');
                 res.send({status: 0, message: 'LOGOUT_OK'});
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
+        }).catch(message_error => {
+            res.send({status: 1, message: message_error});
         });
     });
     
