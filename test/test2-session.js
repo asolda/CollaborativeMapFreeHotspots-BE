@@ -22,16 +22,16 @@ describe('Session', () => {
             it('Crea una sessione', function (done) {
                 user.getid('Test1@gmail.com')
                 .then(result =>{
-                id=result[0];
-                });
-
+                id=result;
+                            });
+                
                 chai.request(server)
                     .post('/user/login')
                     .send({ 'email': 'Test1@gmail.com', 'password': 'Cico1996' })
                     .end((err, res) => {
 
                         expect(res.body).to.have.property('status', 0);
-                        expect(res.body.message).to.have.property('user', 5 );
+                        expect(res.body.message).to.have.property('user', id );
                        
     
                         done();
