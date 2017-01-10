@@ -6,7 +6,10 @@ function Mailer(){
     
 	this.init = function(){
 		this.transporter = nodemailer.createTransport({
-            service: 'Gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            //service: 'Gmail',
             auth: {
                 user: config.smtp_google_user,
                 pass: config.smtp_google_pass
