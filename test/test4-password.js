@@ -57,6 +57,27 @@ describe('Password', () => {
                 });
         });
     });
+    describe('Cambia Password', () => {
+        it('Cambia password per l\'utente testgophercmfh@gmail.com', function (done) {
+
+
+            agent
+                .post('/user/login')
+                .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
+                .then((res) => {
+                    expect(res).to.have.cookie('actoken32');
+
+
+                    agent.post('/user/change_password/')
+                        .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
+                        .then((res) => {
+                            expect(res.body).to.have.property('status', 0);
+                            expect(res.body).to.have.property('message', 'PASSWORD_UPDATED');
+                            done();
+                        });
+                });
+        });
+    });
 
 });
 

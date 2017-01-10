@@ -13,22 +13,22 @@ chai.use(chaiHttp);
 var id;
 //Our parent block
 describe('Session', () => {
-
+var agent = chai.request.agent(server);
     /*
-      * Testa la funzione di login
+      * Testa la funzione di login e logout
       */
-    describe('Crea la sessione', () => {
-        describe('restituisce il cookie di sessione', () => {
-            it('Crea una sessione', function (done) {
+    describe('Crea e distrugge la sessione', () => {
+        describe('Mantiene il cookie di sessione', () => {
+            it('Crea una sessione(login)', function (done) {
                 user.getid('testgophercmfh@gmail.com')
                 .then(result =>{
                 id=result;
                             });
                 
-                chai.request(server)
+                agent
                     .post('/user/login')
                     .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
-                    .end((err, res) => {
+                    .then(res => {
 
                         expect(res.body).to.have.property('status', 0);
                         expect(res.body.message).to.have.property('user', id );
@@ -39,6 +39,24 @@ describe('Session', () => {
             });
         });
 
+    describe('Elimina il cookie di sessione', () => {
+            it('Elimina una sessione(logout)', function (done) {
+               
+                
+                agent
+                    .post('/user/logout')
+                    
+                    .then( res => {
+
+                        expect(res.body).to.have.property('status', 0);
+                        expect(res.body).to.have.property('message', 'LOGOUT_OK');
+                       
+    
+                        done();
+                    });
+                    
+            });
+        });
 
     });
 });

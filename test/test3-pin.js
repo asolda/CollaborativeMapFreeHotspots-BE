@@ -35,29 +35,28 @@ describe('Pins', () => {
          * Testa la funzione di inserimento pin usando l'agent per mantenere la sessione
          */
     describe('Inserimento rete', () => {
-        describe('Test con rete: { \'ssid\': \'Test1\', \'qualità\': 3, \'latitudine\': 1, \'longitudine\': 2, \'necessità_login\': 0, \'restrizioni\': \'Nessuna\', \'altre_informazioni\': \'PASS:Ciao\', \'range\': 20, \'utente\': userid}', () => {
-            it('Dovrebbe inserire il PIN', function (done) {
-                var agent = chai.request.agent(server);
-                let email='testgophercmfh@gmail.com';
-                let id ;
-                agent
-                    .post('/user/login')
-                    .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
-                    .then((res) => {
-                        expect(res).to.have.cookie('actoken32');
-                   
-                     return agent
 
-                            .post('/pin/new')
-                            .send({ 'ssid': 'Test1', 'qualità': 3, 'latitudine': 1, 'longitudine': 2, 'necessità_login': 0, 'restrizioni': 'Nessuna', 'altre_informazioni': 'PASS:Ciao', 'range': 20 })
-                            .then((res) => {
-                            
-                                expect(res.body).to.have.property('status', 0);
-                                expect(res.body).to.have.property('message', 'INSERT_OK');
-                                done();
-                            });
-                    });
-            });
+        it('Dovrebbe inserire il PIN', function (done) {
+            var agent = chai.request.agent(server);
+            let email = 'testgophercmfh@gmail.com';
+            let id;
+            agent
+                .post('/user/login')
+                .send({ 'email': 'testgophercmfh@gmail.com', 'password': 'Cico1996' })
+                .then((res) => {
+                    expect(res).to.have.cookie('actoken32');
+
+                    return agent
+
+                        .post('/pin/new')
+                        .send({ 'ssid': 'Test1', 'qualità': 3, 'latitudine': 1, 'longitudine': 2, 'necessità_login': 0, 'restrizioni': 'Nessuna', 'altre_informazioni': 'PASS:Ciao', 'range': 20 })
+                        .then((res) => {
+
+                            expect(res.body).to.have.property('status', 0);
+                            expect(res.body).to.have.property('message', 'INSERT_OK');
+                            done();
+                        });
+                });
 
         });
     });
