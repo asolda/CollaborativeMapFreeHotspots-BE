@@ -3,7 +3,7 @@ test selenium, per eseguirlo usere cmd nightwatch --config nightwatch.conf.BASIC
 */
 
 var config = require('../nightwatch.conf.BASIC.js');
-
+let user = require("../models/user");
 module.exports = { // adapted from: https://git.io/vodU0
     'Check page displaying': function (browser) {
         browser
@@ -26,8 +26,53 @@ module.exports = { // adapted from: https://git.io/vodU0
         });
 
     },
+    'Check registration function present': function (browser) {
+        // browser.pause(500);
+        browser
+            .expect.element('#show-signup').to.be.present;
+        browser.click('#show-signup', function (response) {
+            this
+                .waitForElementVisible('#dialog-signup', 3000, function () {
+                    // do something while we're here
+
+                    this
+                        .saveScreenshot('signup.png');
+
+                });
+
+
+        });
+
+    },
+    'Register a user': function (browser) {
+        // browser.pause(500);
+        browser
+            .setValue('input#in-r-email.mdl-textfield__input', 'Testfront1@gmail.com');
+        browser
+            .setValue('input#in-r-password.mdl-textfield__input', 'Cico1996');
+        browser
+            .setValue('input#in-r-confermapassword.mdl-textfield__input', 'Cico1996');
+
+        user.create({ 'email': 'Testfront1@gmail.com', 'password': 'Cico1996' })
+            .then(message_ok => {
+
+
+            });
+        browser.click('#enterbtn-signup', function (response) {
+            this
+                .pause(3000)
+
+                .saveScreenshot('Registrazione eseguita.png')
+            browser.click('#closebtn-signupBis', function (response) {
+                
+
+
+            });
+        });
+
+    },
     'Check login function present': function (browser) {
-       // browser.pause(500);
+        // browser.pause(500);
         browser
             .expect.element('#show-login').to.be.present;
         browser.click('#show-login', function (response) {
@@ -37,7 +82,7 @@ module.exports = { // adapted from: https://git.io/vodU0
 
                     this
                         .saveScreenshot('Login.png');
-                       
+
                 });
 
 
@@ -45,21 +90,22 @@ module.exports = { // adapted from: https://git.io/vodU0
 
     },
     'Login a user': function (browser) {
-       // browser.pause(500);
+        // browser.pause(500);
         browser
-            .setValue('input#in-l-email.mdl-textfield__input', 'finalgalaxy@gmail.com');
-            browser
-            .setValue('input#in-l-password.mdl-textfield__input', 'test');
+            .setValue('input#in-l-email.mdl-textfield__input', 'Testfront1@gmail.com');
+        browser
+            .setValue('input#in-l-password.mdl-textfield__input', 'Cico1996');
         browser.click('#enterbtna-login', function (response) {
             this
-            .pause(3000)
-                
-                        .saveScreenshot('Login eseguito.png')
-                        .end();
+                .pause(3000)
+
+                .saveScreenshot('Login eseguito.png')
+                .end();
 
 
 
         });
 
     }
+    
 };
