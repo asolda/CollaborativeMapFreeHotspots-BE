@@ -13,7 +13,8 @@ function Mailer(){
             auth: {
                 user: config.smtp_google_user,
                 pass: config.smtp_google_pass
-            }
+            },
+            logger: true
         });
     };
 }
