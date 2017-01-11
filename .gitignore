@@ -3,4 +3,6 @@ node_modules
 .DS_STORE
 *.png
 reports/
+reports/*.xml
+*.log
 *.xml
