@@ -153,7 +153,8 @@ function Pin() {
                             if (result[0].utente != utente) {
                                 con.query('INSERT INTO valuta (utente, rete_wifi, voto) VALUES (?, ?, ?)', [utente, data.rete_wifi, data.voto], function (err, result) {
                                     if (err) {
-                                        reject('ERROR_DB');
+                                        console.log("result="+JSON.stringify(result));
+                                        reject('ERROR_RANKING_ALREADY_DONE');
                                     } else {
                                         /* Details about this query:
                                             (TODO Delete with triggers)
