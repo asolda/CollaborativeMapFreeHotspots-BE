@@ -224,7 +224,7 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.getuserpins(req, res);
         }).catch(message_err=>{
-            res.send({status:1, message_err});
+            res.send({status:1, message: message_err});
         });  
     });
     //testato
@@ -238,7 +238,7 @@ module.exports = {
                 res.send({status: 1, message: message_error});
             });
         }).catch(message_err=>{
-            res.send({status:1, message_err});
+            res.send({status: 1, message: message_err});
         });           
     });
     //testato
@@ -252,7 +252,7 @@ module.exports = {
                 res.send({status: 1, message: message_error});
             });
         }).catch(message_err=>{
-            res.send({status:1, message_err});
+            res.send({status: 1, message: message_err});
         }); 
     });
     //testato
@@ -261,12 +261,13 @@ module.exports = {
     app.post('/pin/rank', function(req, res){
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.rank(user_id, req.body).then(message_ok => {
+                console.log("i reached that spot");
                 res.send({status: 0, message: message_ok});
             }).catch(message_error => {
                 res.send({status: 1, message: message_error});
             });
         }).catch(message_err=>{
-            res.send({status:1, message_err});
+            res.send({status: 1, message: message_err});
         }); 
     });
     //testato
@@ -280,7 +281,7 @@ module.exports = {
                 res.send({status: 1, message: message_error});
             });
         }).catch(message_err=>{
-            res.send({status:1, message_err});
+            res.send({status: 1, message: message_err});
         }); 
     });
   }
