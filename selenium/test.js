@@ -1,3 +1,7 @@
+/*
+test selenium, per eseguirlo usere cmd nightwatch --config nightwatch.conf.BASIC.js 
+*/
+
 var config = require('../nightwatch.conf.BASIC.js');
 
 module.exports = { // adapted from: https://git.io/vodU0
