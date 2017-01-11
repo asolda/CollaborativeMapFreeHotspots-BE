@@ -15,28 +15,50 @@ module.exports = { // adapted from: https://git.io/vodU0
     'Check map displaying': function (browser) {
         browser
             .expect.element('#map').to.be.present;
-            browser.waitForElementVisible('#map>div>div.gm-style>div>div>div>div>div.gm-style-iw>div>div', 15000, function() {
-    // do something while we're here
+        browser.waitForElementVisible('#map>div>div.gm-style>div>div>div>div>div.gm-style-iw>div>div', 15000, function () {
+            // do something while we're here
 
- this
-   .assert.containsText("#map>div>div.gm-style>div>div>div>div>div.gm-style-iw>div>div", "Tu sei qui");
-    this
-        .pause(5000)
-            .saveScreenshot('Mappa.png');
-  });
-        
+            this
+                .assert.containsText("#map>div>div.gm-style>div>div>div>div>div.gm-style-iw>div>div", "Tu sei qui");
+            this
+
+                .saveScreenshot('Mappa.png');
+        });
+
     },
     'Check login function present': function (browser) {
+       // browser.pause(500);
         browser
             .expect.element('#show-login').to.be.present;
         browser.click('#show-login', function (response) {
             this
-                .expect.element('#dialog-login').to.be.present;
+                .waitForElementVisible('#dialog-login', 3000, function () {
+                    // do something while we're here
+
+                    this
+                        .saveScreenshot('Login.png');
+                       
+                });
+
+
+        });
+
+    },
+    'Login a user': function (browser) {
+       // browser.pause(500);
+        browser
+            .setValue('input#in-l-email.mdl-textfield__input', 'finalgalaxy@gmail.com');
+            browser
+            .setValue('input#in-l-password.mdl-textfield__input', 'test');
+        browser.click('#enterbtna-login', function (response) {
             this
             .pause(3000)
-                .saveScreenshot('Login.png')
-                .end();
-              
+                
+                        .saveScreenshot('Login eseguito.png')
+                        .end();
+
+
+
         });
 
     }
