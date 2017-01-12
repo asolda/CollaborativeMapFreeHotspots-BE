@@ -141,14 +141,15 @@ ALTER TABLE valuta
 
   
  --triggers
- /*
+DELIMITER $$
+ 
 CREATE TRIGGER `incrementa_segnalazione`
 AFTER INSERT ON `segnalazione` 
 FOR EACH ROW
 BEGIN
 UPDATE `rete_wifi` SET numero_segnalazioni = numero_segnalazioni +1 
 WHERE `id` = NEW.rete_wifi;
-END;
+END$$
 
 CREATE TRIGGER `incrementa_valutazione`
 AFTER INSERT ON `valuta` 
@@ -156,5 +157,6 @@ FOR EACH ROW
 BEGIN
 UPDATE `rete_wifi` SET numero_recensioni= numero_recensioni +1 
 WHERE `id` = NEW.rete_wifi;
-END;
-*/
+END$$
+
+DELIMITER ;

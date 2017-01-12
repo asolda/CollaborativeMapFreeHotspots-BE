@@ -141,7 +141,25 @@ ALTER TABLE valuta
   ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
 
   
-  
+  DELIMITER $$
+ 
+CREATE TRIGGER `incrementa_segnalazione`
+AFTER INSERT ON `segnalazione` 
+FOR EACH ROW
+BEGIN
+UPDATE `rete_wifi` SET numero_segnalazioni = numero_segnalazioni +1 
+WHERE `id` = NEW.rete_wifi;
+END$$
+
+CREATE TRIGGER `incrementa_valutazione`
+AFTER INSERT ON `valuta` 
+FOR EACH ROW
+BEGIN
+UPDATE `rete_wifi` SET numero_recensioni= numero_recensioni +1 
+WHERE `id` = NEW.rete_wifi;
+END$$
+
+DELIMITER ;
   
   
 -- Query di popolazione

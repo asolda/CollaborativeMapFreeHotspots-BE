@@ -288,49 +288,12 @@ function User() {
     this.delete = function (user_id) {
         return new Promise((resolve, reject) => {
             connection.acquire(function (err, con) {
-                con.query('DELETE FROM sessione WHERE utente = ?', [user_id], function (err, result) {
-
+                con.query('DELETE FROM utente WHERE id = ?', [user_id], function (err, result) {
                     if (err) {
-                        reject('ERROR_DB');
-                    }
-                    else {
-                        con.query('DELETE FROM segnalazione WHERE utente = ?', [user_id], function (err, result) {
-                            if (err) {
-                                reject('ERROR_DB');
-                            }
-                            else {
-                                con.query('DELETE FROM valuta WHERE utente = ?', [user_id], function (err, result) {
-                                    if (err) {
-                                        reject('ERROR_DB');
-                                    }
-                                    else {
-                                        con.query('DELETE FROM rete_wifi WHERE utente = ?', [user_id], function (err, result) {
-                                            if (err) {
-                                                reject('ERROR_DB');
-                                            }
-                                            else {
-                                                con.query('DELETE FROM utente WHERE id = ?', [user_id], function (err, result) {
-                                                    if (err) {
-                                                        reject('ERROR_DB');
-                                                    }
-                                                    else{
-                                                        resolve('DELETE_OK');
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    reject('ERROR_DB');
+                    } else resolve(user_id);
                 });
-
-
-
-
-                
-            });
+           });
         });
     }
 
