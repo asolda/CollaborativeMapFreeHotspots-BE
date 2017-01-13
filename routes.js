@@ -81,8 +81,8 @@ module.exports = {
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
         var url_parsed = decodeURIComponent(req.params.redirect_url);
         token.check(req.params.token).then(token_got => {
-           res.redirect('http://'+url_parsed+'?action=RESET_PASSWORD&token='+token_got);
-        }).catch(err => res.redirect('http://'+url_parsed));
+           res.redirect(url_parsed+'?action=RESET_PASSWORD&token='+token_got);
+        }).catch(err => res.redirect(url_parsed));
     });
     //testato
     // Endpoint utilizzato per modificare la password, in caso in cui NON si è loggati (recupero), dopo aver confermato l'operazione (success: password modificata).
@@ -131,8 +131,8 @@ module.exports = {
     app.get('/user/delete/token/:token/redirect/:redirect_url', function(req, res){
         var url_parsed = decodeURIComponent(req.params.redirect_url);
         token.check(req.params.token).then(token_got => {
-           res.redirect('http://'+url_parsed+'?action=DELETE_USER&token='+token_got);
-        }).catch(err => res.redirect('http://'+url_parsed));
+           res.redirect(url_parsed+'?action=DELETE_USER&token='+token_got);
+        }).catch(err => res.redirect(url_parsed));
     });
 
     //testato

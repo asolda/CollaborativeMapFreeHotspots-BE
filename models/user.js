@@ -109,7 +109,7 @@ function User() {
     this.create_do_request = function (user, res) {
         this.create(user).then(message_ok => {
             var url_parsed = decodeURIComponent(user.redirect_url);
-            res.redirect('http://' + url_parsed);
+            res.redirect(url_parsed);
         }).catch(message_error => {
             res.send({ status: 1, message: message_error });
         });
