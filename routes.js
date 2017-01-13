@@ -56,6 +56,7 @@ module.exports = {
     // Endpoint, link inviato nella mail, per inserire un nuovo utente nel DB (success: creazione nuova riga in utente).
     // @params token, email, password, redirect_url
     app.get('/user/new/do/token/:token/email/:email/password/:password/redirect/:redirect_url', function(req, res) {
+        console.log("params"+JSON.stringify(req.params));
         token.check(req.params.token).then(token_gen => {
             token.delete(req.params.token).then(token_deleted => {
                 user.create_do_request(req.params, res);
@@ -80,7 +81,7 @@ module.exports = {
     app.get('/user/reset_password/token/:token/redirect/:redirect_url', function(req, res){
         var url_parsed = decodeURIComponent(req.params.redirect_url);
         token.check(req.params.token).then(token_got => {
-           res.redirect('http://'+url_parsed+'?action=RESET_PASSWORDtoken='+token_got);
+           res.redirect('http://'+url_parsed+'?action=RESET_PASSWORD&token='+token_got);
         }).catch(err => res.redirect('http://'+url_parsed));
     });
     //testato
@@ -198,7 +199,11 @@ module.exports = {
     });
     
     app.post('/segnala/', function(req, res){
-        segnala.report(req, res);
+        session.check(req.cookies.actoken32).then(user_id =>{
+            segnala.report(user_id, req, res);
+        }).catch(err=>{
+            res.send({status: 1, message: err.message||err});
+        });
     });
     //testato
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
