@@ -20,7 +20,7 @@ describe('Delete-User', () => {
       */
     var tokens;
     describe('Elimina L\' utente', () => {
-        it('Crea la richiesta per eliminare l\'utente Test1@gmail.com', function (done) {
+        it('Crea la richiesta per eliminare l\'utente testgophercmfh@gmail.com', function (done) {
 
 
             agent
@@ -65,7 +65,7 @@ describe('Delete-User', () => {
 
     // Testa la funzione di creazione utente
 
-    describe('Elimina l\'utente Test1@gmail.com.', (done) => {
+    describe('Elimina l\'utente testgophercmfh@gmail.com.', (done) => {
         it('testa l\'eliminazione vera e propria di un utente', function (done) {
 
 
@@ -78,7 +78,7 @@ describe('Delete-User', () => {
 
                         .then((res) => {
                             expect(res.body).to.have.property('status', 0);
-                            expect(res.body).to.have.property('message', 'DELETE_OK');
+                          
                             done();
                         });
                 });
