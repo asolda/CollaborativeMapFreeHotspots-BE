@@ -140,29 +140,44 @@ CREATE TABLE IF NOT EXISTS `valuta` (
   KEY `FK_valuta_UTENTE` (`rete_wifi`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Limiti per le tabelle scaricate
---
+  
 
---
--- Limiti per la tabella `rete_wifi`
---
-ALTER TABLE `rete_wifi`
-  ADD CONSTRAINT `FK_rete_wifi_UTENTE` FOREIGN KEY (`utente`) REFERENCES `utente` (`id`);
+-- Vincoli relazionali
+ALTER TABLE rete_wifi
+  ADD CONSTRAINT FK_rete_wifi_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE; 
+  
+ALTER TABLE segnalazione
+  ADD CONSTRAINT FK_segnalazione_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_segnalazione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
 
---
--- Limiti per la tabella `segnalazione`
---
-ALTER TABLE `segnalazione`
-  ADD CONSTRAINT `FK_segnalazione_RETE_WIFI` FOREIGN KEY (`rete_wifi`) REFERENCES `rete_wifi` (`id`),
-  ADD CONSTRAINT `FK_segnalazione_UTENTE` FOREIGN KEY (`utente`) REFERENCES `utente` (`id`);
+ALTER TABLE sessione
+  ADD CONSTRAINT FK_sessione_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
+  
+ALTER TABLE valuta
+  ADD CONSTRAINT FK_valuta_RETE_WIFI FOREIGN KEY (rete_wifi) REFERENCES rete_wifi(id) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_valuta_UTENTE FOREIGN KEY (utente) REFERENCES utente(id) ON DELETE CASCADE;
 
---
--- Limiti per la tabella `sessione`
---
-ALTER TABLE `sessione`
-  ADD CONSTRAINT `FK_sessione_UTENTE` FOREIGN KEY (`utente`) REFERENCES `utente` (`id`);
+  
+ --triggers
+DELIMITER $$
+ 
+CREATE TRIGGER `incrementa_segnalazione`
+AFTER INSERT ON `segnalazione` 
+FOR EACH ROW
+BEGIN
+UPDATE `rete_wifi` SET numero_segnalazioni = numero_segnalazioni +1 
+WHERE `id` = NEW.rete_wifi;
+END$$
 
+CREATE TRIGGER `incrementa_valutazione`
+AFTER INSERT ON `valuta` 
+FOR EACH ROW
+BEGIN
+UPDATE `rete_wifi` SET numero_recensioni= numero_recensioni +1 
+WHERE `id` = NEW.rete_wifi;
+END$$
+
+DELIMITER ;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
