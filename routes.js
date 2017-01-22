@@ -213,7 +213,16 @@ module.exports = {
     
     app.post('/segnala/notifications/watch/', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
-            segnala.notification_watched(user_id, req.body, res);
+            pin.get(req.body.rete_wifi).then(pin_data => {
+                console.log(JSON.stringify(pin_data));
+                if(user_id == pin_data.utente){
+                    segnala.notification_watched(req.body, res);
+                }else{
+                    res.send({status: 1, message: 'ERROR_IS_NOT_OWNER'});
+                }
+            }).catch(err=>{
+                res.send({status: 1, message: err.message||err});
+            });
         }).catch(err=>{
             res.send({status: 1, message: err.message||err});
         });

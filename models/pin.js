@@ -46,11 +46,10 @@ function Pin() {
                     if (err) {
                         reject('ERROR_DB');
                     } else {
-                        resolve(result);
+                        resolve(result[0]);
                     }
                     con.release();
-                }
-                );
+                });
             });
         });
     }
