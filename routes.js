@@ -211,6 +211,14 @@ module.exports = {
         });
     });
     
+    app.get('/segnala/notifications/watch/', function(req, res){
+        session.check(req.cookies.actoken32).then(user_id =>{
+            segnala.notification_watched(user_id, req.body, res);
+        }).catch(err=>{
+            res.send({status: 1, message: err.message||err});
+        });
+    });
+    
     //testato
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
     // @params id

@@ -30,7 +30,7 @@ function Segnala(){
             con.query('SELECT COUNT(*) AS num_visual, visualizzato FROM segnalazione INNER JOIN rete_wifi ON segnalazione.rete_wifi=rete_wifi.id WHERE rete_wifi.utente=? HAVING segnalazione.visualizzato = 0', [user_id],
                 function (err, result) {
                     if (err) {
-                        res.send({ status: 1, message: 'ERROR_DB' })
+                        res.send({status: 1, message: 'ERROR_DB'});
                     } else {
                         if(result.length > 0){
                             res.send({status: 0, message: result[0].num_visual});
@@ -49,7 +49,7 @@ function Segnala(){
             con.query('SELECT rete_wifi.ssid, segnalazione.tipo, segnalazione.dettagli, segnalazione.visualizzato FROM segnalazione INNER JOIN rete_wifi ON segnalazione.rete_wifi=rete_wifi.id WHERE rete_wifi.utente=?', [user_id],
                 function (err, result) {
                     if (err) {
-                        res.send({ status: 1, message: 'ERROR_DB' })
+                        res.send({status: 1, message: 'ERROR_DB'});
                     } else {
                         res.setHeader('Content-Type', 'application/json');
                         res.send(JSON.stringify(result));
@@ -60,5 +60,19 @@ function Segnala(){
         });
     };
     
+    this.notification_watched = function(user_id, data, res){
+        connection.acquire(function (err, con) {
+            con.query('UPDATE segnalazione SET visualizzato = 1 WHERE utente=? AND rete_wifi=? AND tipo=?', [user_id, data.rete_wifi, data.tipo],
+                function (err, result) {
+                    if (err) {
+                        res.send({status: 1, message: 'ERROR_DB'});
+                    } else {
+                        res.send({status: 0, message: 'NOTIFICATION_WATCHED_OK'});
+                    }
+                    con.release();
+                }
+            );
+        });
+    }
 }
 module.exports = new Segnala();
