@@ -22,18 +22,7 @@ module.exports = {
     app.get('/', function(req, res) {
 		res.end('If you reach this endpoint, then Node.js is working! :D');
 	});
-
-	app.post('/test_nodemailer/', function(req, res){
-        mailer.transporter.sendMail({
-            from: config.smtp_google_user,
-            to: 'finalgalaxy@gmail.com',
-            subject: 'Testsubj!',
-            text: 'Testtext!'
-        }, function (err, responseStatus){
-            mailer.transporter.close();
-        });
-        res.send({status: 0});
-    });
+    
     //testato
     // Verifica dell'esistenza del token nel DB (usato dagli scripts di preload in caso di ?token=TOKEN_VALUE).
     app.get('/token/:token/', function(req, res){
