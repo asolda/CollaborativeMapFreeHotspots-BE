@@ -27,7 +27,7 @@ function Segnala(){
     
     this.check_num_notifications = function(user_id, res){
         connection.acquire(function (err, con) {
-            con.query('SELECT COUNT(*) AS num_visual, visualizzato FROM segnalazione INNER JOIN rete_wifi ON segnalazione.rete_wifi=rete_wifi.id WHERE rete_wifi.utente=? HAVING segnalazione.visualizzato = 0', [user_id],
+            con.query('SELECT COUNT(*) as num_visual FROM segnalazione INNER JOIN rete_wifi ON segnalazione.rete_wifi=rete_wifi.id WHERE rete_wifi.utente=? AND segnalazione.visualizzato=0', [user_id],
                 function (err, result) {
                     if (err) {
                         res.send({status: 1, message: 'ERROR_DB'});
