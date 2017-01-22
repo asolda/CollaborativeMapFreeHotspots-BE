@@ -194,6 +194,23 @@ module.exports = {
             res.send({status: 1, message: err.message||err});
         });
     });
+    
+    app.get('/segnala/notifications', function(req, res){
+        session.check(req.cookies.actoken32).then(user_id =>{
+            segnala.notifications(user_id, res);
+        }).catch(err=>{
+            res.send({status: 1, message: err.message||err});
+        });
+    });
+    
+    app.get('/segnala/notifications/amount/', function(req, res){
+        session.check(req.cookies.actoken32).then(user_id =>{
+            segnala.check_num_notifications(user_id, res);
+        }).catch(err=>{
+            res.send({status: 1, message: err.message||err});
+        });
+    });
+    
     //testato
     // Endpoint per visualizza dettagli pin WiFi (success: dati della rete WiFi in JSON).
     // @params id

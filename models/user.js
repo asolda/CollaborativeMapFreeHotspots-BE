@@ -274,7 +274,7 @@ function User() {
                     res.send({status: 1, message: message_error});
                 });
             }else{
-                res.send({status: 1, message: 'ERROR_PASSWORD'})
+                res.send({status: 1, message: 'ERROR_PASSWORD'});
             }
         }).catch(message_error => {
             res.send({status: 1, message: message_error });
