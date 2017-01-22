@@ -105,7 +105,7 @@ module.exports = {
     });
     //testato
     // Endpoint per richiedere l'eliminazione dell'account (success: invio mail, gen. token).
-    // @params frontend_url, utente (tramite la sessione)
+    // @params password, frontend_url, utente (tramite la sessione)
     app.post('/user/delete/request', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             user.delete_request(user_id, req.body, res);

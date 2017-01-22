@@ -59,17 +59,17 @@ function User() {
     this.create_user_request = function (user, res) {
         connection.acquire(function (err, con) {
             if ((user.email == null || user.email.length == 0) && (user.password == null || user.password.length == 0)) {
-                res.send({ status: 1, message: 'ERROR_EMAIL_PASSWORD' });
+                res.send({status: 1, message: 'ERROR_EMAIL_PASSWORD' });
             } else if (user.email == null || user.email.length == 0 || !validateEmail(user.email)) {
-                res.send({ status: 1, message: 'ERROR_EMAIL' });
+                res.send({status: 1, message: 'ERROR_EMAIL' });
             } else if (user.password == null || user.password.length == 0 || !validatePassword(user.password)) {
-                res.send({ status: 1, message: 'ERROR_PASSWORD' });
+                res.send({status: 1, message: 'ERROR_PASSWORD' });
             } else if (user.password.length < 8) {
-                res.send({ status: 1, message: 'ERROR_PASSWORD_LENGTH' });
+                res.send({status: 1, message: 'ERROR_PASSWORD_LENGTH' });
             } else {
                 con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function (err, result) {
                     if (err) {
-                        res.send({ status: 1, message: 'ERROR_DB' });
+                        res.send({status: 1, message: 'ERROR_DB' });
                     } else {
                         if (result.length == 0 || result[0].n_found == 0) {
                             // Generate token
@@ -89,15 +89,15 @@ function User() {
                                     });
 
                                     // Send JSON to middleware informing mail is sent
-                                    res.send({ status: 0, message: 'REGISTRATION_REQUEST_OK' });
+                                    res.send({status: 0, message: 'REGISTRATION_REQUEST_OK' });
                                 } else {
-                                    res.send({ status: 1, message: 'ERROR_DB' });
+                                    res.send({status: 1, message: 'ERROR_DB' });
                                 }
                             }).catch(err => {
-                                res.send({ status: 1, message: 'ERROR_DB', extra: err.message });
+                                res.send({status: 1, message: 'ERROR_DB', extra: err.message });
                             });
                         } else {
-                            res.send({ status: 1, message: 'ERROR_EMAIL_ALREADY_EXISTS' });
+                            res.send({status: 1, message: 'ERROR_EMAIL_ALREADY_EXISTS' });
                         }
                     }
                 });
@@ -111,7 +111,7 @@ function User() {
             var url_parsed = decodeURIComponent(user.redirect_url);
             res.redirect(url_parsed);
         }).catch(message_error => {
-            res.send({ status: 1, message: message_error });
+            res.send({status: 1, message: message_error });
         });
     }
 
@@ -148,11 +148,11 @@ function User() {
     this.reset_password_request = function (user, res) {
         connection.acquire(function (err, con) {
             if (user.email == null || user.email.length == 0 || !validateEmail(user.email)) {
-                res.send({ status: 1, message: 'ERROR_EMAIL' });
+                res.send({status: 1, message: 'ERROR_EMAIL' });
             } else {
                 con.query('SELECT COUNT(id) AS n_found FROM utente WHERE email=?', [user.email], function (err, result) {
                     if (err) {
-                        res.send({ status: 1, message: 'ERROR_DB' });
+                        res.send({status: 1, message: 'ERROR_DB' });
                     } else {
                         if (result[0].n_found > 0) {
                             // Generate token
@@ -172,15 +172,15 @@ function User() {
                                     });
 
                                     // Send JSON to middleware informing mail is sent
-                                    res.send({ status: 0, message: 'RESET_REQUEST_OK' });
+                                    res.send({status: 0, message: 'RESET_REQUEST_OK' });
                                 } else {
-                                    res.send({ status: 1, message: 'ERROR_DB' });
+                                    res.send({status: 1, message: 'ERROR_DB' });
                                 }
                             }).catch(err => {
-                                res.send({ status: 1, message: 'ERROR_DB' });
+                                res.send({status: 1, message: 'ERROR_DB' });
                             });
                         } else {
-                            res.send({ status: 1, message: 'ERROR_EMAIL_NOT_FOUND' });
+                            res.send({status: 1, message: 'ERROR_EMAIL_NOT_FOUND' });
                         }
                     }
                 });
@@ -191,9 +191,9 @@ function User() {
 
     this.set_password_do_request = function (email, password, res) {
         this.set_password(email, password).then(message_ok => {
-            res.send({ status: 0, message: message_ok });
+            res.send({status: 0, message: message_ok });
         }).catch(message_error => {
-            res.send({ status: 1, message: message_error });
+            res.send({status: 1, message: message_error });
         });
     }
 
@@ -253,34 +253,39 @@ function User() {
 
     this.delete_request = function (user_id, data, res) {
         this.get(user_id).then(user => {
-            token.generate(user.email).then(token_generated => {
-                // Encode frontend URL to be parsed from express into GET requests
-                var url = encodeURIComponent(data.frontend_url);
+            var hash_psw = crypto.createHash('sha1').update(data.password).digest("hex");
+            if(hash_psw == user.password){
+                token.generate(user.email).then(token_generated => {
+                    // Encode frontend URL to be parsed from express into GET requests
+                    var url = encodeURIComponent(data.frontend_url);
 
-                // Send mail
-                mailer.transporter.sendMail({
-                    from: config.smtp_google_user,
-                    to: user.email,
-                    subject: user.email + ', conferma l\'eliminazione del tuo account su AlwaysConnected',
-                    text: 'Per confermare l\'eliminazione del tuo account, clicca qui: ' + config.server_ip_address_http + ':' + config.server_port + '/user/delete/token/' + token_generated + '/redirect/' + url
-                }, function (err, responseStatus) {
-                    mailer.transporter.close();
+                    // Send mail
+                    mailer.transporter.sendMail({
+                        from: config.smtp_google_user,
+                        to: user.email,
+                        subject: user.email + ', conferma l\'eliminazione del tuo account su AlwaysConnected',
+                        text: 'Per confermare l\'eliminazione del tuo account, clicca qui: ' + config.server_ip_address_http + ':' + config.server_port + '/user/delete/token/' + token_generated + '/redirect/' + url
+                    }, function (err, responseStatus){
+                        mailer.transporter.close();
+                    });
+
+                    res.send({status: 0, message: 'DELETE_REQUEST_OK' });
+                }).catch(message_error => {
+                    res.send({status: 1, message: message_error});
                 });
-
-                res.send({ status: 0, message: 'DELETE_REQUEST_OK' });
-            }).catch(message_error => {
-                res.send({ status: 1, message: message_error });
-            });
+            }else{
+                res.send({status: 1, message: 'ERROR_PASSWORD'})
+            }
         }).catch(message_error => {
-            res.send({ status: 1, message: message_error });
+            res.send({status: 1, message: message_error });
         });
     };
 
     this.delete_do_request = function (user_id, res) {
         this.delete(user_id).then(message_ok => {
-            res.send({ status: 0, message: message_ok });
+            res.send({status: 0, message: message_ok});
         }).catch(message_error => {
-            res.send({ status: 1, message: message_error });
+            res.send({status: 1, message: message_error});
         });
     }
 
