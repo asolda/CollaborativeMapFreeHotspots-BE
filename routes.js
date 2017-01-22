@@ -95,8 +95,8 @@ module.exports = {
             user.get(user_id).then(data => {
                 user.set_password(data.email, req.body.password).then(message_ok => {
                     res.send({status: 0, message: message_ok});
-                }).catch(message_error => {
-                    res.send({status: 1, message: message_error});
+                }).catch(message_err => {
+                    res.send({status: 1, message: message_err});
                 });
             })
         }).catch(err => {
@@ -158,8 +158,8 @@ module.exports = {
             }).catch(err=>{
                 res.send({status: 1, message: 'ERROR_GENERATING_SESSION'});
             });
-        }).catch(message_error => {
-            res.send({status: 1, message: message_error});
+        }).catch(message_err => {
+            res.send({status: 1, message: message_err});
             });
         });           
     });
@@ -170,11 +170,11 @@ module.exports = {
             session.drop(session_cookie).then(id => {
                 res.clearCookie('actoken32');
                 res.send({status: 0, message: 'LOGOUT_OK'});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
+            }).catch(message_err => {
+                res.send({status: 1, message: message_err});
             });
-        }).catch(message_error => {
-            res.send({status: 1, message: message_error});
+        }).catch(message_err => {
+            res.send({status: 1, message: message_err});
         });
     });
     //testato
@@ -183,7 +183,7 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id =>{
             res.send({status:0, message:{user: user_id}});
         }).catch(err=>{
-            res.send({status:1, message: err.message||err});
+            res.send({status: 1, message: err.message||err});
         });
     });
     
@@ -201,8 +201,8 @@ module.exports = {
         pin.get(req.params.pin_id).then(result => {
             res.setHeader('Content-Type', 'application/json');
             res.send({status: 0, message: result});
-        }).catch(message_error => {
-            res.send({status: 1, message: message_error});
+        }).catch(message_err => {
+            res.send({status: 1, message: message_err});
         })
     });
     //testato
@@ -211,16 +211,18 @@ module.exports = {
     app.get('/pin/get_networks/:latitudine/:longitudine/:radius_lat/:radius_long', function(req, res){
 		pin.getlistpin(req, res);
 	});
-    //testato
-    // Endpoint per gestione reti WiFi (success: lista di reti WiFi create dall'utente (da cambiare in sessione).
+    
+    
+    // Endpoint per gestione reti WiFi (success: lista di reti WiFi create dall'utente.
     // @params utente (tramite la sessione)
-    app.get('/pin/get_user_networks/:utente/', function(req, res){
+    app.get('/pin/get_user_networks/', function(req, res){
         session.check(req.cookies.actoken32).then(user_id=> {
-            pin.getuserpins(req, res);
+            pin.getuserpins(user_id, res);
         }).catch(message_err=>{
-            res.send({status:1, message: message_err});
+            res.send({status: 1, message: message_err});
         });  
     });
+    
     //testato
     // Endpoint per inserire un nuovo pin (success: creazione riga in rete_wifi nel DB).
     // @params ssid, qualità, latitudine, longitudine, necessità_login, restrizioni, altre_informazioni, range, utente (tramite la sessione)
@@ -228,8 +230,8 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.insert(user_id, req.body).then(message_ok => {
                 res.send({status: 0, message: message_ok});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
+            }).catch(message_err => {
+                res.send({status: 1, message: message_err});
             });
         }).catch(message_err=>{
             res.send({status: 1, message: message_err});
@@ -242,8 +244,8 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.edit(user_id, req.body).then(message_ok => {
                 res.send({status: 0, message: message_ok});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
+            }).catch(message_err => {
+                res.send({status: 1, message: message_err});
             });
         }).catch(message_err=>{
             res.send({status: 1, message: message_err});
@@ -255,10 +257,9 @@ module.exports = {
     app.post('/pin/rank', function(req, res){
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.rank(user_id, req.body).then(message_ok => {
-                console.log("i reached that spot");
                 res.send({status: 0, message: message_ok});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
+            }).catch(message_err => {
+                res.send({status: 1, message: message_err});
             });
         }).catch(message_err=>{
             res.send({status: 1, message: message_err});
@@ -271,8 +272,8 @@ module.exports = {
         session.check(req.cookies.actoken32).then(user_id=> {
             pin.delete(user_id, req.body).then(message_ok => {
                 res.send({status: 0, message: message_ok});
-            }).catch(message_error => {
-                res.send({status: 1, message: message_error});
+            }).catch(message_err => {
+                res.send({status: 1, message: message_err});
             });
         }).catch(message_err=>{
             res.send({status: 1, message: message_err});

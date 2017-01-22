@@ -21,9 +21,9 @@ function Pin() {
         });
     };
 
-    this.getuserpins = function (req, res) {
+    this.getuserpins = function (utente, res) {
         connection.acquire(function (err, con) {
-            con.query('SELECT id,ssid,latitudine,longitudine,qualità FROM rete_wifi WHERE utente = ?', [req.params.utente],
+            con.query('SELECT id,ssid,latitudine,longitudine,qualità FROM rete_wifi WHERE utente = ?', [utente],
                 function (err, result) {
                     if (err) {
                         res.send({ status: 1, message: 'ERROR_DB' })
