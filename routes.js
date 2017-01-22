@@ -211,7 +211,7 @@ module.exports = {
         });
     });
     
-    app.get('/segnala/notifications/watch/', function(req, res){
+    app.post('/segnala/notifications/watch/', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             segnala.notification_watched(user_id, req.body, res);
         }).catch(err=>{
