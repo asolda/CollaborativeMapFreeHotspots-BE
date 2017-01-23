@@ -207,6 +207,7 @@ function User() {
                 connection.acquire(function (err, con) {
                     var hash_psw = crypto.createHash('sha1').update(password).digest("hex");
                     con.query('UPDATE utente SET password=? WHERE email=?', [hash_psw, email], function (err, result) {
+                        con.release();
                         if (err) {
                             reject('ERROR_DB');
                         } else {
@@ -231,6 +232,7 @@ function User() {
                     var mail = user.email, hash_psw = crypto.createHash('sha1').update(user.password).digest("hex");
 
                     con.query('SELECT password, id FROM utente WHERE email=?', [mail], function (err2, result) {
+                        con.release();
                         if (err2) {
                             reject(err2.message);
                         } else {
@@ -245,7 +247,6 @@ function User() {
                             }
                         }
                     });
-                    con.release();
                 }
             });
         });
