@@ -5,6 +5,7 @@ var segnala = require('./models/segnala');
 var token = require('./models/token');
 var session = require('./models/session');
 var uuid=require('node-uuid');
+var crypto = require('crypto');
 var config = require('./config');
 var mailer = require('./mailer');
 
@@ -93,7 +94,8 @@ module.exports = {
     app.post('/user/change_password/', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             user.get(user_id).then(data => {
-                if(req.body.old_password == data.password){
+                var hash_psw = crypto.createHash('sha1').update(req.body.old_password).digest("hex");
+                if(hash_psw == data.password){
                     user.set_password(data.email, req.body.password).then(message_ok => {
                         res.send({status: 0, message: message_ok});
                     }).catch(message_err => {
@@ -102,7 +104,9 @@ module.exports = {
                 }else{
                     res.send({status: 1, message: 'ERROR_OLD_PASSWORD'});
                 }
-            })
+            }).catch(err => {
+                res.send({status: 1, message: 'ERROR_SESSION'});
+            });
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_SESSION'});
         });
