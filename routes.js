@@ -89,15 +89,19 @@ module.exports = {
     });
     //testato
     // Endpoint utilizzato per modificare la password, in caso in cui si è loggati (modifica), dopo aver confermato l'operazione (success: password modificata).
-    // @params password, utente (tramite la sessione)
+    // @params old_password, password, utente (tramite la sessione)
     app.post('/user/change_password/', function(req, res){
         session.check(req.cookies.actoken32).then(user_id =>{
             user.get(user_id).then(data => {
-                user.set_password(data.email, req.body.password).then(message_ok => {
-                    res.send({status: 0, message: message_ok});
-                }).catch(message_err => {
-                    res.send({status: 1, message: message_err});
-                });
+                if(req.body.old_password == data.password){
+                    user.set_password(data.email, req.body.password).then(message_ok => {
+                        res.send({status: 0, message: message_ok});
+                    }).catch(message_err => {
+                        res.send({status: 1, message: message_err});
+                    });
+                }else{
+                    res.send({status: 1, message: 'ERROR_OLD_PASSWORD'});
+                }
             })
         }).catch(err => {
             res.send({status: 1, message: 'ERROR_SESSION'});
