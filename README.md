@@ -27,5 +27,3 @@ Screenshots:
 Repository names:
 - Frontend and middleware: CollaborativeMapFreeHotspots-FE
 - Backend and testing: CollaborativeMapFreeHotspots-BE
-
-[Readme work in progress]
